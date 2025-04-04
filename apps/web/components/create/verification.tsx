@@ -5,15 +5,15 @@ import SelfQRcodeWrapper, { countries, SelfApp, SelfAppBuilder } from "@selfxyz/
 import { countryCodes } from "@selfxyz/core"
 import { useAccount } from "wagmi"
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Input } from "@workspace/ui/components/input"
+import { Button } from "@workspace/ui/components/button"
+import { Label } from "@workspace/ui/components/label"
+import { Slider } from "@workspace/ui/components/slider"
+import { Checkbox } from "@workspace/ui/components/checkbox"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@workspace/ui/components/dialog"
+import { ScrollArea } from "@workspace/ui/components/scroll-area"
 import { AlertCircle } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@workspace/ui/components/card"
 import { useTaskForm } from "@/context/task-form-context"
 
 export default function VerificationStep() {
