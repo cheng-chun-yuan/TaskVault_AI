@@ -5,7 +5,7 @@ import { Providers } from "@/components/providers"
 import Web3Provider from "@/components/layout/Web3Provider"
 import AppHeader from "@/components/layout/AppHeader"
 import AppFooter from "@/components/layout/AppFooter"
-import "@/app/globals.css"
+import "@workspace/ui/styles/globals.css"
 
 const fontSans = FontSans({
   subsets: ["latin"],
