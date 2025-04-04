@@ -95,7 +95,7 @@ export default function VerificationStep() {
               min={0}
               max={100}
               step={1}
-              onValueChange={(val) => handleAgeChange(val[0])}
+              onValueChange={(val) => handleAgeChange(val[0] ?? 0)}
             />
             <p className="text-sm text-muted-foreground">Set to 0 to disable age requirement</p>
           </div>
