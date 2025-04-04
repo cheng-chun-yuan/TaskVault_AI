@@ -1,12 +1,12 @@
 "use client"
 
 import React from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@workspace/ui/components/button"
+import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
+import { Card, CardContent } from "@workspace/ui/components/card"
 import { Plus, Trash2 } from "lucide-react"
-import { useTaskForm } from "@/context/task-form-context"
+import { useTaskForm } from "@/content/task-form-context"
 
 export default function JudgesStep() {
   const { formData, updateJudge, addJudge, removeJudge, errors, generateStyleCommit } = useTaskForm()
