@@ -6,7 +6,7 @@ import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Plus, Trash2 } from "lucide-react"
-import { useTaskForm } from "@/content/task-form-context"
+import { useTaskForm } from "@/context/task-form-context"
 
 export default function JudgesStep() {
   const { formData, updateJudge, addJudge, removeJudge, errors, generateStyleCommit } = useTaskForm()
