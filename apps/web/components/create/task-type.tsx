@@ -1,12 +1,12 @@
 import { useTaskForm } from "@/context/task-form-context"
 import { TaskType } from "@/types/task-form"
-import { Label } from "@/components/ui/label"
+import { Label } from "@workspace/ui/components/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger
-} from "@/components/ui/select"
+} from "@workspace/ui/components/select"
 
 const taskTypes: { value: TaskType; label: string; description: string; disabled?: boolean }[] = [
   {

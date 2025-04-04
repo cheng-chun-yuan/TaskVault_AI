@@ -1,9 +1,9 @@
 "use client"
 
 import { AlertCircle } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
+import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group"
 import { cn } from "@/lib/utils"
 import { useTaskForm } from "@/context/task-form-context"
 
