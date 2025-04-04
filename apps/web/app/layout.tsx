@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Mona_Sans as FontSans, Fira_Mono as FontMono } from "next/font/google"
 import { cn } from "@/lib/utils"
-import { Providers } from "@/components/providers"
+import { Providers } from "@/components/layout/providers"
 import Web3Provider from "@/components/layout/Web3Provider"
 import AppHeader from "@/components/layout/AppHeader"
 import AppFooter from "@/components/layout/AppFooter"
