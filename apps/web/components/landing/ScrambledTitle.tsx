@@ -45,15 +45,18 @@ class TextScramble {
     let complete = 0
 
     for (let i = 0, n = this.queue.length; i < n; i++) {
-      const { from, to, start, end } = this.queue[i];
-      let { char } = this.queue[i];
+      const item = this.queue[i]
+      if (!item) continue
+
+      const { from, to, start, end } = item
+      let { char } = item
       if (this.frame >= end) {
         complete++
         output += to
       } else if (this.frame >= start) {
         if (!char || Math.random() < 0.28) {
           char = this.chars[Math.floor(Math.random() * this.chars.length)]
-          this.queue[i].char = char
+          item.char = char
         }
         output += `<span class="dud">${char}</span>`
       } else {
@@ -88,7 +91,7 @@ const ScrambledTitle = () => {
       const phrases = ["Create tasks.", "Let AI judge.", "Reward the best —", "transparently.", "Only on TaskVault AI."]
       let counter = 0
       const next = () => {
-        scramblerRef.current!.setText(phrases[counter]).then(() => {
+        scramblerRef.current!.setText(phrases[counter] || "").then(() => {
           setTimeout(next, 2000)
         })
         counter = (counter + 1) % phrases.length
