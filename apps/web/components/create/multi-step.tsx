@@ -173,7 +173,9 @@ function TaskFormContent() {
           olderThan,
           forbiddenCountriesEnabled,
           forbiddenCountriesListPackedString.map(n => BigInt(n)) as [bigint, bigint, bigint, bigint],
-          ofacEnabled
+          ofacEnabled,
+          BigInt(formData.maxPerTime),
+          BigInt(formData.maxPerDay),
         ],
       })
 

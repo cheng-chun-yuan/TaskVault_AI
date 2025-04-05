@@ -17,6 +17,8 @@ export interface TaskFormData {
   styleCommit: string | undefined
   tokenAddress: string
   amount: string
+  maxPerTime: string
+  maxPerDay: string
   createdBy: string
   taskType: TaskType
 }
@@ -31,6 +33,8 @@ export interface FormErrors {
   styleCommit?: string
   tokenAddress?: string
   amount?: string
+  maxPerTime?: string
+  maxPerDay?: string
   taskType?: string
   [key: `judge${number}`]: string | undefined
 }

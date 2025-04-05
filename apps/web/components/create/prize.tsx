@@ -65,6 +65,40 @@ export default function PrizeStep() {
               </p>
             )}
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="maxPerTime">Max Reward Per Time</Label>
+            <Input
+              id="maxPerTime"
+              type="number"
+              value={formData.maxPerTime}
+              onChange={(e) => updateFormData("maxPerTime", e.target.value)}
+              placeholder="0.0"
+              className={errors.maxPerTime ? "border-destructive" : ""}
+            />
+            {errors.maxPerTime && (
+              <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                <AlertCircle className="h-4 w-4" /> {errors.maxPerTime}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="maxPerDay">Max Reward Per Day</Label>
+            <Input
+              id="maxPerDay"
+              type="number"
+              value={formData.maxPerDay}
+              onChange={(e) => updateFormData("maxPerDay", e.target.value)}
+              placeholder="0.0"
+              className={errors.maxPerDay ? "border-destructive" : ""}
+            />
+            {errors.maxPerDay && (
+              <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                <AlertCircle className="h-4 w-4" /> {errors.maxPerDay}
+              </p>
+            )}
+          </div>
         </>
     </div>
   )

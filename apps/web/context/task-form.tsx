@@ -33,6 +33,8 @@ const defaultFormData: TaskFormData = {
   styleCommit: undefined,
   tokenAddress: "",
   amount: "",
+  maxPerTime: "",
+  maxPerDay: "",
   createdBy: "",
   taskType: "TWITTER_INTERACT"
 }
@@ -142,6 +144,8 @@ export function TaskFormProvider({ children }: { children: ReactNode }) {
       case 4:
         if (!formData.tokenAddress) newErrors.tokenAddress = "Token address is required"
         if (!formData.amount) newErrors.amount = "Amount is required"
+        if (!formData.maxPerTime) newErrors.maxPerTime = "Max reward per time is required"
+        if (!formData.maxPerDay) newErrors.maxPerDay = "Max reward per day is required"
         break
     }
 
