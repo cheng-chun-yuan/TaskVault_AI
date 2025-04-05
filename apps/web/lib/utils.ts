@@ -19,6 +19,7 @@ export const calculateStyleHash = (criteria: string[], judgeStyle: string, salt:
 
 export type TaskData = {
   title: string
+  description: string
   criteria: string[]
   judgeStyle: string
   salt: string
@@ -26,7 +27,7 @@ export type TaskData = {
   tokenAddress: Address
   amount: string
   styleCommit?: Hash
-  creatorAddress: Address
+  createdBy: Address
 }
 
 export const shorten = (address: string | undefined) => {

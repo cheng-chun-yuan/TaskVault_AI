@@ -36,7 +36,7 @@
     "wagmi": "^2.14.16"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.17.19",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@workspace/eslint-config": "workspace:^",

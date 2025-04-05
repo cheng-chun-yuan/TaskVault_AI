@@ -174,18 +174,6 @@ async function main() {
         console.log(`✅ Solution submitted: ${hash}`);
     }
 
-    async function checkRegistry(taskId: bigint, address: string){
-        console.log(`check registry for ${taskId}...`);
-        const hash = await walletClient.readContract({
-            ...contracts.submissionRegistry,
-            functionName: 'verifiedUsers',
-            args: [taskId, address]
-        });
-        await publicClient.waitForTransactionReceipt({ hash });
-        console.log(`✅ Solution submitted: ${hash}`);
-    }
-
-
     async function revealStyle(taskId: bigint, style: string, salt: string) {
         console.log(`Revealing style for task ${taskId}...`);
         const hash = await walletClient.writeContract({

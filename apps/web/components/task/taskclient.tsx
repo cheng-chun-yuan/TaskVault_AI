@@ -64,6 +64,7 @@ const mockTasks = {
 
 export default function TaskPageClient({ taskId }: { taskId: string }) {
   const [showQR, setShowQR] = useState(false);
+  const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -108,19 +109,24 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
     ofac: true,
   };
 
-  const selfApp = new SelfAppBuilder({
-    appName: "TaskVault AI",
-    scope: "trustjudge-ai",
-    endpoint: `https://novel-rapidly-panda.ngrok-free.app/api/verify/0`,
-    logoBase64: logo,
-    userId: address,
-    userIdType: "hex",
-    disclosures: {
-        ...disclosures,
-        minimumAge: disclosures.minimumAge > 0 ? disclosures.minimumAge : undefined
-    },
-    devMode: false,
-  } as Partial<SelfApp>).build();
+  useEffect(() => {
+    if (!address) return
+    const selfApp = new SelfAppBuilder({
+      appName: "TaskVault AI",
+      scope: "trustjudge-ai",
+      endpoint: `https://novel-rapidly-panda.ngrok-free.app/api/verify/${taskId}`,
+      endpointType: "https",
+      logoBase64: logo,
+      userId: address,
+      userIdType: "hex",
+      disclosures: {
+          ...disclosures,
+          minimumAge: disclosures.minimumAge > 0 ? disclosures.minimumAge : undefined
+      },
+      devMode: false,
+    } as Partial<SelfApp>).build();
+    setSelfApp(selfApp);
+  }, [address]);
 
   const handleSuccess = async () => {
     console.log("Verification successful");
@@ -175,7 +181,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
               Scan to Verify and Register the Task !!
             </p>
             <SelfQRcodeWrapper
-              selfApp={selfApp}
+              selfApp={selfApp!}
               onSuccess={handleSuccess}
               darkMode={true}
             />

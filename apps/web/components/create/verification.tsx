@@ -29,8 +29,8 @@ export default function VerificationStep() {
   useEffect(() => {
     if (!address) return
     const app = new SelfAppBuilder({
-      appName: "TaskVault_AI",
-      scope: "taskvault-ai",
+      appName: "Test Only(not approve)",
+      scope: "taskvault-test",
       endpoint: "https://playground.self.xyz/api/verify",
       endpointType: "https",
       logoBase64: "https://i.imgur.com/Rz8B3s7.png",

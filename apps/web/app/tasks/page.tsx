@@ -8,6 +8,16 @@ export default function TasksPage() {
   // Mock data - in a real app this would come from an API or blockchain
   const tasks = [
     {
+      id: "0",
+      title: "Create a Landing Page for DeFi Protocol",
+      description: "Design and implement a responsive landing page for our new DeFi protocol.",
+      deadline: "April 15, 2025",
+      timeLeft: "14 days left",
+      reward: "2 ETH",
+      status: "Open",
+      submissions: 3,
+    },
+    {
       id: "1",
       title: "Design a Logo for Web3 Project",
       description:
@@ -50,26 +60,6 @@ export default function TasksPage() {
       reward: "1.5 ETH",
       status: "Closed",
       submissions: 6,
-    },
-    {
-      id: "5",
-      title: "Create a Landing Page for DeFi Protocol",
-      description: "Design and implement a responsive landing page for our new DeFi protocol.",
-      deadline: "April 15, 2025",
-      timeLeft: "14 days left",
-      reward: "2 ETH",
-      status: "Open",
-      submissions: 3,
-    },
-    {
-      id: "demo",
-      title: "UI/UX Design for Mobile App",
-      description: "Design a clean, intuitive user interface for our mobile cryptocurrency wallet application.",
-      deadline: "April 25, 2025",
-      timeLeft: "24 days left",
-      reward: "1.2 ETH",
-      status: "Open",
-      submissions: 0,
     },
   ]
 
