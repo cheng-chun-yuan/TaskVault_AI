@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/button";
 import SelfQRcodeWrapper, { countries, SelfApp, SelfAppBuilder } from "@selfxyz/qrcode";
@@ -25,7 +25,9 @@ import {
   User,
 } from "lucide-react";
 import { logo } from "@/components/task/logo";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
+import { SubmissionRegistry } from "@/content/address";
+import { SubmissionRegistryAbi } from "@/content/abi";
 
 // Mock data - in a real app this would come from an API or blockchain
 const mockTasks = {
@@ -62,11 +64,30 @@ const mockTasks = {
 
 export default function TaskPageClient({ taskId }: { taskId: string }) {
   const [showQR, setShowQR] = useState(false);
-  // const [isRegistered, setIsRegistered] = useState(false);
-  const isRegistered = false;
+  const [isRegistered, setIsRegistered] = useState(false);
+  const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient();
+
+  useEffect(() => {
+    const checkRegistration = async () => {
+      if (!address || !publicClient || !isConnected) return;
+      try {
+        const isRegistered = await publicClient.readContract({
+          address: SubmissionRegistry,
+          abi: SubmissionRegistryAbi,
+          functionName: 'verifiedUsers',
+          args: [0, address],
+        }) as boolean;
+        setIsRegistered(isRegistered);
+      } catch (error) {
+        console.error('Error checking registration:', error);
+        setIsRegistered(false);
+      }
+    };
+    checkRegistration();
+  }, [address, publicClient]);
   const [revealStyle, setRevealStyle] = useState(false);
   const task = mockTasks[taskId as keyof typeof mockTasks] || mockTasks.demo;
-  const { address } = useAccount();
   const statusColor = {
     Open: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
     Judging:
