@@ -1,17 +1,42 @@
 {
-  "name": "contract",
+  "name": "ai_judge_contract",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy:hardhat": "npx hardhat run scripts/deploy.ts --network hardhat",
+    "deploy:sepolia": "npx hardhat run scripts/deploy.ts --network sepolia",
+    "deploy:celo": "npx hardhat run scripts/deploy.ts --network celo",
+    "interact:hardhat": "npx hardhat run scripts/interact.ts --network hardhat",
+    "interact:sepolia": "npx hardhat run scripts/interact.ts --network sepolia",
+    "interact:celo": "npx hardhat run scripts/interact.ts --network celo"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^0.15.0",
+    "@nomicfoundation/hardhat-ignition-viem": "^0.15.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
-    "hardhat": "^2.22.19"
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@nomicfoundation/hardhat-viem": "^2.0.0",
+    "@types/chai": "^4.2.0",
+    "@types/chai-as-promised": "^7.1.6",
+    "@types/mocha": ">=9.1.0",
+    "@types/node": ">=18.0.0",
+    "chai": "^4.2.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.19",
+    "hardhat-gas-reporter": "^1.0.8",
+    "solidity-coverage": "^0.8.0",
+    "ts-node": ">=8.0.0",
+    "typescript": "~5.0.4",
+    "viem": "^2.24.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.2.0",
+    "@selfxyz/contracts": "^0.0.2",
+    "@selfxyz/core": "0.0.23"
   }
-}
+} 
