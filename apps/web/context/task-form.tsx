@@ -109,7 +109,7 @@ export function TaskFormProvider({ children }: { children: ReactNode }) {
     }
 
     const combinedStyle = judgeStyles.join("|")
-    const hash = calculateStyleHash(formData.criteria, combinedStyle, formData.judges.map(j => j.name).join("|"))
+    const hash = calculateStyleHash(formData.criteria, combinedStyle, "trustVault")
     updateFormData("styleCommit", hash)
   }
 

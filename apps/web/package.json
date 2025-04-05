@@ -24,6 +24,7 @@
     "@selfxyz/qrcode": "^0.0.17",
     "@tanstack/react-query": "^5.71.10",
     "@workspace/ui": "workspace:*",
+    "@zk-email/sdk": "^0.0.133",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.475.0",

@@ -10,8 +10,8 @@ export async function GET() {
   return Response.json({ message: 'Hello World: api verify' });
 }
 
-export async function POST(req: NextRequest, { params }: { params: { taskId: string } }) {
-  const taskId = params.taskId;
+export async function POST(req: NextRequest) {
+  const taskId = req.url.split('/').pop();
   console.log("taskId", taskId)
   const body = await req.json();
   const { proof, publicSignals } = body;

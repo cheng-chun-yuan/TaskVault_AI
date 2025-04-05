@@ -9,9 +9,7 @@ export async function POST(req: Request) {
     const task = await prisma.task.create({
       data: {
         ...data,
-        description: data.description!,
         styleCommit: data.styleCommit!,
-        createdBy: data.createdBy!,
       },
     })
 

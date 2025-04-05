@@ -192,7 +192,7 @@ async function main() {
     // Example usage
     try {
         // Create a new task
-        const criteria = ['Must be innovative', 'Must be secure'];
+        const criteria = ['aa'];
         const style = "so cool"
         const salt = "XueDAO"
         const styleCommit = keccak256(

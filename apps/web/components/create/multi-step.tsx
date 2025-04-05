@@ -41,6 +41,7 @@ function TaskFormContent() {
   // Trigger save to DB once transaction is confirmed
   useEffect(() => {
     const saveTaskToDB = async () => {
+      // if (!isConfirmed || !address || !formData.deadline) return
       if (!isConfirmed || !address || !formData.deadline) return
 
       try {
@@ -73,7 +74,7 @@ function TaskFormContent() {
     }
 
     saveTaskToDB()
-  }, [isConfirmed, address, formData, router])
+  }, [address, formData, router])
 
   const checkAndApproveToken = async () => {
     if (!address || !formData.tokenAddress || !formData.amount) return false
@@ -143,7 +144,14 @@ function TaskFormContent() {
       // First approve tokens if needed
       const isApproved = await checkAndApproveToken()
       const scopeName = 'trustjudge-ai';
-      const endpoint = `https://novel-rapidly-panda.ngrok-free.app/api/verify/0`;
+      const taskCounter = await publicClient?.readContract({
+        address: TaskVaultCore,
+        abi: TaskVaultCoreAbi,
+        functionName: 'taskCounter',
+        args: [],
+      }) as bigint
+      console.log(taskCounter)
+      const endpoint = `https://novel-rapidly-panda.ngrok-free.app/api/verify/${Number(taskCounter)}`;
       const scope = hashEndpointWithScope(endpoint, scopeName);
       const attestationId = 1n;
       const olderThanEnabled = formData.minimumAge ? true : false;
@@ -156,6 +164,10 @@ function TaskFormContent() {
       }
       const ofacEnabled = [formData.ofac, false, false];
       if (!isApproved) return
+      const forbiddenCountriesPacked: [bigint, bigint, bigint, bigint] = 
+        Array.isArray(forbiddenCountriesListPackedString) && forbiddenCountriesListPackedString.length === 4
+          ? forbiddenCountriesListPackedString.map(n => BigInt(n)) as [bigint, bigint, bigint, bigint]
+          : [0n, 0n, 0n, 0n];
 
       const txHash = await writeContractAsync({
         address: TaskVaultCore,
@@ -172,10 +184,10 @@ function TaskFormContent() {
           olderThanEnabled,
           olderThan,
           forbiddenCountriesEnabled,
-          forbiddenCountriesListPackedString.map(n => BigInt(n)) as [bigint, bigint, bigint, bigint],
+          forbiddenCountriesPacked,
           ofacEnabled,
-          BigInt(formData.maxPerTime),
-          BigInt(formData.maxPerDay),
+          parseEther(formData.maxPerTime),
+          parseEther(formData.maxPerDay),
         ],
       })
 

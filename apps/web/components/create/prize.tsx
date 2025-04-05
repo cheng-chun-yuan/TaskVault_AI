@@ -4,8 +4,10 @@ import { AlertCircle } from "lucide-react"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select"
 import { cn } from "@/lib/utils"
 import { useTaskForm } from "@/context/task-form"
+import { ERC20Mock } from "@/content/address"
 
 export default function PrizeStep() {
   const { formData, errors, updateFormData } = useTaskForm()
@@ -34,14 +36,18 @@ export default function PrizeStep() {
       </div>
         <>
           <div className="space-y-2">
-            <Label htmlFor="tokenAddress">Token Address</Label>
-            <Input
-              id="tokenAddress"
+            <Label htmlFor="tokenAddress">Token</Label>
+            <Select
               value={formData.tokenAddress}
-              onChange={(e) => updateFormData("tokenAddress", e.target.value)}
-              placeholder="0x..."
-              className={cn("font-mono", errors.tokenAddress ? "border-destructive" : "")}
-            />
+              onValueChange={(value) => updateFormData("tokenAddress", value)}
+            >
+              <SelectTrigger className={cn("font-mono", errors.tokenAddress ? "border-destructive" : "")}>
+                <SelectValue placeholder="Select a token" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ERC20Mock}>ERC20Mock</SelectItem>
+              </SelectContent>
+            </Select>
             {errors.tokenAddress && (
               <p className="text-sm text-destructive flex items-center gap-1 mt-1">
                 <AlertCircle className="h-4 w-4" /> {errors.tokenAddress}
