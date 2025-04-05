@@ -124,7 +124,9 @@ async function main() {
         styleCommit: `0x${string}`,
         deadline: number,
         prizeAmount: bigint,
-        verificationConfig: VerificationConfig
+        verificationConfig: VerificationConfig,
+        maxPerTime: bigint,
+        maxPerDay: bigint
     ) {
         console.log('Creating new task...');
 
@@ -155,7 +157,9 @@ async function main() {
                 verificationConfig.olderThan,
                 verificationConfig.forbiddenCountriesEnabled,
                 verificationConfig.forbiddenCountriesListPacked,
-                verificationConfig.ofacEnabled
+                verificationConfig.ofacEnabled,
+                maxPerTime,
+                maxPerDay
             ]
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
@@ -199,6 +203,9 @@ async function main() {
 
         const verificationConfig = getVerificationConfig(0n);
 
+        const maxPerTime = 10n;
+        const maxPerDay = 100n;
+
         // Get verification config from deployments
         console.log('Using verification config:', verificationConfig);
 
@@ -208,7 +215,9 @@ async function main() {
             styleCommit,
             deadline,
             prizeAmount,
-            verificationConfig
+            verificationConfig,
+            maxPerTime,
+            maxPerDay
         );
 
         // Submit a solution

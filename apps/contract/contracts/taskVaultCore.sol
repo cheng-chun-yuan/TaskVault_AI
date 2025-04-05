@@ -37,6 +37,8 @@ contract TaskVaultCore is Ownable{
         bool forbiddenCountriesEnabled;
         uint256[4] forbiddenCountriesListPacked;
         bool[3] ofacEnabled;
+        uint256 maxPerTime;
+        uint256 maxPerDay;
     }
 
     uint256 public taskCounter;
@@ -90,7 +92,9 @@ contract TaskVaultCore is Ownable{
         uint256 _olderThan,
         bool _forbiddenCountriesEnabled,
         uint256[4] calldata _forbiddenCountriesListPacked,
-        bool[3] calldata _ofacEnabled
+        bool[3] calldata _ofacEnabled,
+        uint256 _maxPerTime,
+        uint256 _maxPerDay
     ) external payable returns (uint256 taskId) {
         require(submissionRegistry != address(0), "Submission registry not set");
         require(_prizeToken == address(0) || approvedTokens[_prizeToken], "Token not approved");
@@ -100,10 +104,10 @@ contract TaskVaultCore is Ownable{
 
         if (_prizeToken == address(0)) {
             require(msg.value == _prizeAmount, "ETH prize mismatch");
-            PrizeVault(prizeVault).deposit{value: msg.value}(taskId, _prizeAmount, _prizeToken);
+            PrizeVault(prizeVault).deposit{value: msg.value}(taskId, _prizeAmount, _prizeToken, _maxPerTime, _maxPerDay);
         } else {
             IERC20(_prizeToken).transferFrom(msg.sender, prizeVault, _prizeAmount);
-            PrizeVault(prizeVault).deposit(taskId, _prizeAmount, _prizeToken);
+            PrizeVault(prizeVault).deposit(taskId, _prizeAmount, _prizeToken, _maxPerTime, _maxPerDay);
         }
 
         tasks[taskId] = Task({
@@ -122,7 +126,9 @@ contract TaskVaultCore is Ownable{
             olderThan: _olderThan,
             forbiddenCountriesEnabled: _forbiddenCountriesEnabled,
             forbiddenCountriesListPacked: _forbiddenCountriesListPacked,
-            ofacEnabled: _ofacEnabled
+            ofacEnabled: _ofacEnabled,
+            maxPerTime: _maxPerTime,
+            maxPerDay: _maxPerDay
         });
 
         // Set verification config in submission registry
@@ -156,11 +162,6 @@ contract TaskVaultCore is Ownable{
         Task storage task = tasks[taskId];
         task.judged = true;
         emit Judged(taskId);
-    }
-
-    function claimReward(uint256 taskId, address winner) external onlyJudge {
-        require(tasks[taskId].judged, "Not judged yet");
-        PrizeVault(tasks[taskId].prizeVault).claim(taskId, winner);
     }
 
     function refund(uint256 taskId) external {

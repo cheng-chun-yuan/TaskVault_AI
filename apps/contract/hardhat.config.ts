@@ -7,8 +7,10 @@ dotenv.config();
 
 // Make sure these environment variables are set in your .env file
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0000000000000000000000000000000000000000000000000000000000000000";
+const CELOSCAN_API_KEY = process.env.CELOSCAN_API_KEY || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || "";
+
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -38,7 +40,20 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY
+    apiKey: {
+      sepolia: ETHERSCAN_API_KEY,
+      alfajores: CELOSCAN_API_KEY,
+    },
+    customChains: [
+        {
+            network: "alfajores",
+            chainId: 44787,
+            urls: {
+                apiURL: "https://api-alfajores.celoscan.io/api",
+                browserURL: "https://alfajores.celoscan.io",
+            },
+        },
+    ]
   },
   paths: {
     sources: "./contracts",
