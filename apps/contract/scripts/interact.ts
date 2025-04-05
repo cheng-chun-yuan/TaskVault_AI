@@ -220,6 +220,17 @@ async function main() {
             maxPerDay
         );
 
+        // Add a new task
+        await createTask(
+            criteria,
+            styleCommit,
+            deadline,
+            prizeAmount,
+            verificationConfig,
+            maxPerTime,
+            maxPerDay
+        );
+
         // Submit a solution
         await submitSolution(0n, 'QmYourIPFSHash');
 

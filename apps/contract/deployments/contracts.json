@@ -2,10 +2,10 @@
   "networks": {
     "celo": {
       "contracts": {
-        "TaskVaultCore": "0x0430b64e2f22c145bb5b60768eec4f291965072a",
-        "SubmissionRegistry": "0x6c0d024234c048e2220d777259d2bbb84d9a6d85",
-        "PrizeVault": "0x73e86b1b8dd6f535a0cc67bc0c8939ac0c9488e2",
-        "ERC20Mock": "0xe3949496a8d5b3384f812bc73c447464153a4ac1"
+        "TaskVaultCore": "0x8441c3b1e6747605ab04e8a64f309bfba1fd37fe",
+        "SubmissionRegistry": "0x0ff023acedbf133b998c70dd73d7b54db926cd44",
+        "PrizeVault": "0xaf9048dca78acb1e4ea4a51af7b9e496a10c9e25",
+        "ERC20Mock": "0xa5839608ff9511b66ab177530bd508727ca3455a"
       },
       "config": {
         "verificationConfig": {
@@ -27,7 +27,7 @@
           ]
         }
       },
-      "deploymentTime": "2025-04-05T13:41:01.682Z"
+      "deploymentTime": "2025-04-05T20:58:02.874Z"
     },
     "sepolia": {
       "contracts": {

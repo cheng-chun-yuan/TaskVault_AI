@@ -1,4 +1,4 @@
-export const TaskVaultCore = "0x0430b64e2f22c145bb5b60768eec4f291965072a"
-export const SubmissionRegistry = "0x6c0d024234c048e2220d777259d2bbb84d9a6d85"
-export const PrizeVault = "0x73e86b1b8dd6f535a0cc67bc0c8939ac0c9488e2"
-export const ERC20Mock = "0xe3949496a8d5b3384f812bc73c447464153a4ac1"
+export const TaskVaultCore = "0x8441c3b1e6747605ab04e8a64f309bfba1fd37fe"
+export const SubmissionRegistry = "0x0ff023acedbf133b998c70dd73d7b54db926cd44"
+export const PrizeVault = "0xaf9048dca78acb1e4ea4a51af7b9e496a10c9e25"
+export const ERC20Mock = "0xa5839608ff9511b66ab177530bd508727ca3455a"
