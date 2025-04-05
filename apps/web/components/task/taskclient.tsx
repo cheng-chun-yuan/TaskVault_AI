@@ -77,7 +77,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
           address: SubmissionRegistry,
           abi: SubmissionRegistryAbi,
           functionName: 'verifiedUsers',
-          args: [0, address],
+          args: [taskId, address],
         }) as boolean;
         setIsRegistered(isRegistered);
       } catch (error) {
@@ -86,7 +86,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
       }
     };
     checkRegistration();
-  }, [address, publicClient]);
+  }, [address, publicClient, taskId]);
   const [revealStyle, setRevealStyle] = useState(false);
   const task = mockTasks[taskId as keyof typeof mockTasks] || mockTasks.demo;
   const statusColor = {
@@ -126,7 +126,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
       devMode: false,
     } as Partial<SelfApp>).build();
     setSelfApp(selfApp);
-  }, [address]);
+  }, [address, taskId]);
 
   const handleSuccess = async () => {
     console.log("Verification successful");
