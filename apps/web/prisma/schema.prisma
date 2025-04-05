@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum TaskType {
+  TWITTER_INTERACT
+  CONTENT_DELIVERY
+  OMI_AI_DEVICE
+}
+
+model User {
+  id              String       @id @default(uuid())
+  walletAddress   String       @unique
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  submissions     Submission[]
+  createdTasks    Task[]       @relation("CreatedBy")
+}
+
+model Task {
+  taskId         String       @id @default(uuid())
+  title          String
+  description    String
+  criteria       String[]
+  deadline       DateTime
+  tokenAddress   String
+  amount         String
+  styleCommit    String
+  taskType       TaskType     @default(TWITTER_INTERACT)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  creator        User         @relation("CreatedBy", fields: [createdBy], references: [walletAddress])
+  createdBy      String
+  submissions    Submission[]
+}
+
+model Submission {
+  id              String       @id @default(uuid())
+  taskId          String
+  task            Task         @relation(fields: [taskId], references: [taskId])
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+  contentHash     String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}

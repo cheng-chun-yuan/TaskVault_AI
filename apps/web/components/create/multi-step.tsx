@@ -7,7 +7,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { TaskFormProvider, useTaskForm } from "@/context/task-form"
 import { toast } from "@workspace/ui/hooks/use-toast" 
-import { TaskVaultCore } from "@/content/address"
+import { TaskVaultCore, ERC20Mock } from "@/content/address"
 import { TaskVaultCoreAbi, ERC20MockAbi } from "@/content/abi"
 import { formatEther, parseEther } from "viem"
 import ProgressIndicator from "./progress-indicator"
@@ -19,7 +19,14 @@ import { hashEndpointWithScope, getPackedForbiddenCountries, countries } from "@
 
 function TaskFormContent() {
   const router = useRouter()
-  const { currentStep, setCurrentStep, validateStep, formData } = useTaskForm()
+  const { currentStep, setCurrentStep, validateStep, formData, updateFormData } = useTaskForm()
+
+  // Initialize token address
+  useEffect(() => {
+    if (!formData.tokenAddress) {
+      updateFormData("tokenAddress", ERC20Mock)
+    }
+  }, [])
   const { address } = useAccount()
   const { writeContractAsync } = useWriteContract()
   const publicClient = usePublicClient()
