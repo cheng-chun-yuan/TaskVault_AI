@@ -67,7 +67,7 @@ async function loadContracts(network: string): Promise<{ contracts: Contracts; v
 
 function getVerificationConfig(taskId: bigint): VerificationConfig {
     const scopeName = 'trustjudge-ai';
-    const endpoint = `https://novel-rapidly-panda.ngrok-free.app/api/verify/${Number(taskId)}`;
+    const endpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify/${Number(taskId)}`;
     const scope = hashEndpointWithScope(endpoint, scopeName);
     
     const excludedCountries = [

@@ -5,6 +5,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { SubmissionRegistryAbi } from '@/content/abi';
 import { celoAlfajores } from 'viem/chains';
 import { SubmissionRegistry } from '@/content/address';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   return Response.json({ message: 'Hello World: api verify' });
@@ -83,16 +84,22 @@ export async function POST(req: NextRequest) {
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
 
+    // Save proof to database
+    const savedProof = await prisma.proof.create({
+      data: {
+        taskId,
+        walletAddress: address,
+        proofData: proof,
+        publicData: publicSignals,
+        externalInputs: {},
+        isLocal: false,
+      },
+    });
+
     // Convert BigInt values to strings before sending response
     return Response.json({
       status: 'success',
       result: true,
-      txHash: receipt.transactionHash,
-      blockNumber: receipt.blockNumber.toString(),
-      credentialSubject: {
-        address,
-        taskId
-      }
     });
   } catch (error) {
     console.error("Verification failed:", error);
@@ -119,9 +126,6 @@ export async function POST(req: NextRequest) {
 
     return Response.json({
       status: 'error',
-      result: false,
-      message: errorMessage,
-      details: errorDetails
     }, { status: 500 });
   }
 }

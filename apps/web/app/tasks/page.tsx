@@ -4,64 +4,13 @@ import { Card } from "@workspace/ui/components/card"
 import { Badge } from "@workspace/ui/components/badge"
 import { Calendar, Clock } from "lucide-react"
 
-export default function TasksPage() {
-  // Mock data - in a real app this would come from an API or blockchain
-  const tasks = [
-    {
-      id: "0",
-      title: "Create a Landing Page for DeFi Protocol",
-      description: "Design and implement a responsive landing page for our new DeFi protocol.",
-      deadline: "April 15, 2025",
-      timeLeft: "14 days left",
-      reward: "2 ETH",
-      status: "Open",
-      submissions: 3,
-    },
-    {
-      id: "1",
-      title: "Design a Logo for Web3 Project",
-      description:
-        "Create a modern, professional logo for our Web3 project that represents decentralization and security.",
-      deadline: "April 15, 2025",
-      timeLeft: "2 days left",
-      reward: "0.5 ETH",
-      status: "Open",
-      submissions: 5,
-    },
-    {
-      id: "2",
-      title: "Smart Contract Security Audit",
-      description:
-        "Perform a comprehensive security audit of our DeFi protocol smart contracts and provide a detailed report.",
-      deadline: "April 20, 2025",
-      timeLeft: "5 days left",
-      reward: "2 ETH",
-      status: "Open",
-      submissions: 2,
-    },
-    {
-      id: "3",
-      title: "Create Marketing Strategy",
-      description:
-        "Develop a comprehensive marketing strategy for our NFT marketplace launch, including social media and community engagement.",
-      deadline: "April 5, 2025",
-      timeLeft: "Ended",
-      reward: "1 ETH",
-      status: "Judging",
-      submissions: 8,
-    },
-    {
-      id: "4",
-      title: "Develop API Integration",
-      description:
-        "Create an integration between our platform and a popular third-party API for enhanced functionality.",
-      deadline: "April 3, 2025",
-      timeLeft: "Ended",
-      reward: "1.5 ETH",
-      status: "Closed",
-      submissions: 6,
-    },
-  ]
+export default async function TasksPage() {
+  // Fetch tasks from the API using a GET request
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tasks`);
+  if (!res.ok) {
+    throw new Error('Failed to fetch tasks');
+  }
+  const { tasks } = await res.json();
 
   const statusColor = {
     Open: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
@@ -82,7 +31,7 @@ export default function TasksPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tasks.map((task) => (
+        {tasks.map((task: any) => (
           <Link href={`/task/${task.id}`} key={task.id} className="group">
             <Card className="p-6 h-full flex flex-col transition-all hover:border-primary/50 hover:shadow-sm">
               <div className="flex justify-between items-start mb-4">
