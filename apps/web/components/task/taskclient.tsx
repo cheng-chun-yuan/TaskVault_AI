@@ -37,6 +37,7 @@ import { logo } from "@/components/task/logo";
 import { useAccount, usePublicClient } from "wagmi";
 import { SubmissionRegistry } from "@/content/address";
 import { SubmissionRegistryAbi } from "@/content/abi";
+import { getTaskById } from "@/lib/tasks";
 
 interface Submission {
   id: string;
@@ -47,20 +48,20 @@ interface Submission {
 interface Task {
   taskId: string;
   title: string;
-  description: string;
-  criteria: string[];
-  deadline: Date;
-  tokenAddress: string;
-  amount: string;
-  styleCommit: string;
-  taskType: string;
+  description?: string;
+  criteria?: string[];
+  deadline?: Date;
+  tokenAddress?: string;
+  amount?: string;
+  styleCommit?: string;
+  taskType?: string;
   maxPerTime?: string;
   maxPerDay?: string;
-  createdAt: Date;
-  createdBy: string;
-  submissions: Submission[];
-  status: "Open" | "Judging" | "Closed";
-  salt: string;
+  createdAt?: Date;
+  createdBy?: string;
+  submissions?: Submission[];
+  status?: "Open" | "Judging" | "Closed";
+  salt?: string;
 }
 
 export default function TaskPageClient({ taskId }: { taskId: string }) {
@@ -78,10 +79,8 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const response = await fetch(`/api/tasks/${taskId}`);
-        if (!response.ok) throw new Error("Failed to fetch task");
-        const data = await response.json();
-        setTask(data.task);
+        const task = await getTaskById(taskId);
+        setTask(task);
       } catch (error) {
         console.error("Error fetching task:", error);
       } finally {

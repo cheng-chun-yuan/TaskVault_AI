@@ -3,14 +3,11 @@ import { Button } from "@workspace/ui/components/button"
 import { Card } from "@workspace/ui/components/card"
 import { Badge } from "@workspace/ui/components/badge"
 import { Calendar, Clock } from "lucide-react"
+import { getAllTasks } from "@/lib/tasks"
 
 export default async function TasksPage() {
-  // Fetch tasks from the API using a GET request
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tasks`);
-  if (!res.ok) {
-    throw new Error('Failed to fetch tasks');
-  }
-  const { tasks } = await res.json();
+  // Get tasks directly from the DB via getAllTasks
+  const tasks = await getAllTasks();
 
   const statusColor = {
     Open: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
