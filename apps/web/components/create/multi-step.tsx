@@ -15,6 +15,7 @@ import TaskDetailsStep from "./details"
 import VerificationStep from "./verification"
 import JudgesStep from "./judges"
 import PrizeStep from "./prize"
+import { hashEndpointWithScope, getPackedForbiddenCountries, countries } from "@selfxyz/core"
 
 function TaskFormContent() {
   const router = useRouter()
@@ -134,6 +135,19 @@ function TaskFormContent() {
     try {
       // First approve tokens if needed
       const isApproved = await checkAndApproveToken()
+      const scopeName = 'trustjudge-ai';
+      const endpoint = `https://novel-rapidly-panda.ngrok-free.app/api/verify/0`;
+      const scope = hashEndpointWithScope(endpoint, scopeName);
+      const attestationId = 1n;
+      const olderThanEnabled = formData.minimumAge ? true : false;
+      const olderThan = formData.minimumAge ? BigInt(formData.minimumAge) : 0n;
+      let forbiddenCountriesEnabled = false;
+      let forbiddenCountriesListPackedString: string[] = [];
+      if (formData.excludedCountries.length > 0) {
+        forbiddenCountriesEnabled = true;
+        forbiddenCountriesListPackedString = getPackedForbiddenCountries(formData.excludedCountries);
+      }
+      const ofacEnabled = [formData.ofac, false, false];
       if (!isApproved) return
 
       const txHash = await writeContractAsync({
@@ -145,7 +159,14 @@ function TaskFormContent() {
           formData.styleCommit,
           BigInt(Math.floor(formData.deadline.getTime() / 1000)),
           formData.tokenAddress as `0x${string}`,
-          parseEther(formData.amount)
+          parseEther(formData.amount),
+          BigInt(scope),
+          attestationId,
+          olderThanEnabled,
+          olderThan,
+          forbiddenCountriesEnabled,
+          forbiddenCountriesListPackedString.map(n => BigInt(n)) as [bigint, bigint, bigint, bigint],
+          ofacEnabled
         ],
       })
 
