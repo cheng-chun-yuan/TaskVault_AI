@@ -11,7 +11,7 @@ import { Calendar } from "@workspace/ui/components/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { TaskTypeSelector } from "@/components/create/task-type"
-import { useTaskForm } from "@/context/task-form-context"
+import { useTaskForm } from "@/context/task-form"
 
 export default function TaskDetailsStep() {
   const { formData, errors, updateFormData, addCriterion, removeCriterion } = useTaskForm()

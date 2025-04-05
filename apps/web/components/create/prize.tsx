@@ -5,7 +5,7 @@ import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group"
 import { cn } from "@/lib/utils"
-import { useTaskForm } from "@/context/task-form-context"
+import { useTaskForm } from "@/context/task-form"
 
 export default function PrizeStep() {
   const { formData, errors, updateFormData } = useTaskForm()

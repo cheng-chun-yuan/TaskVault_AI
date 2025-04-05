@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
 import { AlertCircle } from "lucide-react"
 import { Card, CardContent } from "@workspace/ui/components/card"
-import { useTaskForm } from "@/context/task-form-context"
+import { useTaskForm } from "@/context/task-form"
 
 export default function VerificationStep() {
   const { address } = useAccount()
