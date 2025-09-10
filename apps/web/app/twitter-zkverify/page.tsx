@@ -2,20 +2,27 @@
 
 import { useState } from "react";
 import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
+import { zkVerifySession, Library, CurveType } from "zkverifyjs";
 import { useAccount } from "wagmi";
-import { createZkVerifyIntegration, type ZkVerifyResult } from "@/lib/zkverify";
 
 const blueprintSlug = "wryonik/twitter@v3";
 
-export default function Home() {
+interface ZkVerifyResult {
+  transactionHash?: string;
+  blockHash?: string;
+  blockNumber?: number;
+  status: 'pending' | 'success' | 'failed';
+  error?: string;
+}
+
+export default function TwitterZkVerify() {
   const sdk = zkeSdk();
   const { address } = useAccount();
 
   const [fileContent, setFileContent] = useState("");
-  const [isLoading, setIsLoading] = useState<"client" | "server" | "verifying" | null>(null);
+  const [isLoading, setIsLoading] = useState<"generating" | "verifying" | null>(null);
   const [proof, setProof] = useState<Proof | null>(null);
   const [zkVerifyResult, setZkVerifyResult] = useState<ZkVerifyResult | null>(null);
-  const [useZkVerify, setUseZkVerify] = useState(true);
 
   const externalInputs: ExternalInputInput[] = [
     { name: "address", value: address || "", maxLength: 1094 },
@@ -43,7 +50,7 @@ export default function Home() {
     }
 
     try {
-      setIsLoading(mode);
+      setIsLoading("generating");
       setProof(null);
       setZkVerifyResult(null);
 
@@ -60,14 +67,9 @@ export default function Home() {
       console.log("Got proof:", generatedProof);
       setProof(generatedProof);
 
-      if (useZkVerify) {
-        // Use zkVerify for verification
-        await verifyWithZkVerify(generatedProof, blueprint);
-      } else {
-        // Use original on-chain verification
-        const verified = await blueprint.verifyProofOnChain(generatedProof);
-        console.log("Proof verified on-chain:", verified);
-      }
+      // Now verify using zkVerify instead of on-chain verification
+      await verifyWithZkVerify(generatedProof, blueprint);
+
     } catch (err) {
       console.error(`Error generating proof (${mode}):`, err);
       alert("Failed to generate proof. Check the console for details.");
@@ -79,24 +81,58 @@ export default function Home() {
   const verifyWithZkVerify = async (proof: Proof, blueprint: any) => {
     try {
       setIsLoading("verifying");
-      
-      // Check if zkVerify seed phrase is configured
-      if (!process.env.NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE) {
-        throw new Error("zkVerify seed phrase not configured. Please set NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE environment variable.");
-      }
+      setZkVerifyResult({ status: 'pending' });
 
-      const zkVerifyIntegration = createZkVerifyIntegration('Volta');
+      // Get verification key from blueprint
       const vkey = await blueprint.getVkey();
-
-      console.log("Verifying proof with zkVerify...");
       
-      const result = await zkVerifyIntegration.verifyProof(
-        proof, 
-        vkey, 
-        setZkVerifyResult
-      );
+      // Extract proof data in the format expected by zkVerify
+      const proofData = {
+        vk: vkey,
+        proof: proof.props.proofData.proof,
+        publicSignals: proof.props.proofData.publicInputs
+      };
 
-      console.log("zkVerify verification completed:", result);
+      console.log("Verifying proof with zkVerify...", proofData);
+
+      // Initialize zkVerify session
+      // Note: You'll need to provide a seed phrase or private key for the Volta network
+      // For demo purposes, this would need to be configured with proper credentials
+      const session = await zkVerifySession
+        .start()
+        .Volta()
+        .withAccount("your-seed-phrase-here"); // Replace with actual credentials
+
+      // Submit proof for verification
+      const result = await session
+        .verify()
+        .groth16({
+          library: Library.snarkjs,
+          curve: CurveType.bn128
+        })
+        .execute({ proofData });
+
+      console.log("zkVerify result:", result);
+
+      // Listen for transaction inclusion
+      result.on('includedInBlock', (data) => {
+        console.log("Proof included in block:", data);
+        setZkVerifyResult({
+          status: 'success',
+          transactionHash: data.transactionHash,
+          blockHash: data.blockHash,
+          blockNumber: data.blockNumber
+        });
+      });
+
+      result.on('error', (error) => {
+        console.error("zkVerify error:", error);
+        setZkVerifyResult({
+          status: 'failed',
+          error: error.message
+        });
+      });
+
     } catch (error) {
       console.error("zkVerify verification failed:", error);
       setZkVerifyResult({
@@ -121,7 +157,7 @@ export default function Home() {
   return (
     <div className="min-h-screen grid grid-rows-[auto_1fr_auto] p-8 sm:p-20 font-sans items-center justify-items-center">
       <h1 className="text-2xl font-bold text-center">
-        ZK Email Proof: Twitter Badge Verifier
+        ZK Email Proof with zkVerify: Twitter Badge Verifier
       </h1>
 
       <div className="max-w-xl w-full mt-8 space-y-6">
@@ -130,30 +166,10 @@ export default function Home() {
           1. Send yourself a password reset email from Twitter.<br />
           2. Sign in with Gmail and download the most recent Twitter email.<br />
           3. Upload the email file below.<br />
-          4. Choose verification method and click "Generate Proof".
-        </div>
-
-        {/* Verification Method Toggle */}
-        <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-          <span className="text-sm font-medium">Verification Method:</span>
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              checked={useZkVerify}
-              onChange={() => setUseZkVerify(true)}
-              className="text-violet-600"
-            />
-            <span className="text-sm">zkVerify (Recommended)</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              checked={!useZkVerify}
-              onChange={() => setUseZkVerify(false)}
-              className="text-violet-600"
-            />
-            <span className="text-sm">On-chain</span>
-          </label>
+          4. Click "Generate Proof" to create a ZK proof and verify it using zkVerify.
+          <br /><br />
+          <strong>zkVerify Integration:</strong> This demo integrates with zkVerify's 
+          Volta network to provide decentralized proof verification.
         </div>
 
         <input
@@ -165,24 +181,23 @@ export default function Home() {
         <div className="flex gap-4">
           <button
             onClick={() => generateProof("client")}
-            disabled={isLoading !== null}
+            disabled={isLoading === "generating"}
             className="rounded-full bg-violet-50 text-violet-700 px-6 py-2 text-sm font-semibold disabled:opacity-50"
           >
-            {isLoading === "client" ? "Generating..." : "Generate Proof in Browser"}
+            {isLoading === "generating" ? "Generating..." : "Generate Proof (Browser)"}
           </button>
           <button
             onClick={() => generateProof("server")}
-            disabled={isLoading !== null}
+            disabled={isLoading === "generating"}
             className="rounded-full bg-violet-50 text-violet-700 px-6 py-2 text-sm font-semibold disabled:opacity-50"
           >
-            {isLoading === "server" ? "Generating..." : "Generate Proof Remotely"}
+            {isLoading === "generating" ? "Generating..." : "Generate Proof (Remote)"}
           </button>
         </div>
 
         {isLoading && (
           <div className="text-sm text-gray-600">
-            {isLoading === "client" && "Generating ZK proof in browser, this may take several minutes..."}
-            {isLoading === "server" && "Generating ZK proof on server, this may take several minutes..."}
+            {isLoading === "generating" && "Generating ZK proof, this may take several minutes..."}
             {isLoading === "verifying" && "Verifying proof with zkVerify on Volta network..."}
           </div>
         )}
@@ -193,18 +208,15 @@ export default function Home() {
             zkVerifyResult.status === 'failed' ? 'bg-red-50 text-red-800' :
             'bg-yellow-50 text-yellow-800'
           }`}>
-            <strong className="block mb-2">zkVerify Status: {zkVerifyResult.status.toUpperCase()}</strong>
+            <strong className="block mb-2">zkVerify Status: {zkVerifyResult.status}</strong>
             {zkVerifyResult.transactionHash && (
-              <div className="mb-1">Transaction: <span className="font-mono text-xs">{zkVerifyResult.transactionHash}</span></div>
+              <div>Transaction: {zkVerifyResult.transactionHash}</div>
             )}
             {zkVerifyResult.blockNumber && (
-              <div className="mb-1">Block: {zkVerifyResult.blockNumber}</div>
+              <div>Block Number: {zkVerifyResult.blockNumber}</div>
             )}
             {zkVerifyResult.error && (
-              <div className="text-red-700">Error: {zkVerifyResult.error}</div>
-            )}
-            {zkVerifyResult.status === 'success' && (
-              <div className="mt-2 text-green-700">✅ Proof successfully verified on zkVerify network!</div>
+              <div>Error: {zkVerifyResult.error}</div>
             )}
           </div>
         )}

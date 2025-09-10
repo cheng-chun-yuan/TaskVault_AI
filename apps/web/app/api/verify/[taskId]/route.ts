@@ -36,13 +36,10 @@ export async function POST(req: NextRequest) {
     const address = await getUserIdentifier(publicSignals, "hex");
     console.log(`Processing verification for task ${taskId} from address ${address}`);
 
-    // Contract setup
-    const contractAddress = SubmissionRegistry;
     if (!process.env.PRIVATE_KEY) {
       throw new Error('PRIVATE_KEY environment variable is not set');
     }
     const account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY}`);
-    console.log(account)
 
     const publicClient = createPublicClient({
       chain: celoAlfajores,
@@ -71,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     // Write the contract with the new data
     const hash = await walletClient.writeContract({
-      address: contractAddress,
+      address: SubmissionRegistry,
       abi: SubmissionRegistryAbi,
       functionName: 'verifySelfProof',
       args: [proofData, taskId]

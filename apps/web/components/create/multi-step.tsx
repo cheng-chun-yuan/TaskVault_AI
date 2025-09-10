@@ -150,7 +150,6 @@ function TaskFormContent() {
         functionName: 'taskCounter',
         args: [],
       }) as bigint
-      console.log(taskCounter)
       const endpoint = `https://novel-rapidly-panda.ngrok-free.app/api/verify/${Number(taskCounter)}`;
       const scope = hashEndpointWithScope(endpoint, scopeName);
       const attestationId = 1n;

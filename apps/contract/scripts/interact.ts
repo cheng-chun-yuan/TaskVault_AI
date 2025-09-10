@@ -199,15 +199,16 @@ async function main() {
             encodePacked(['string', 'string'], [style, salt])
         );
         const deadline = Math.floor(Date.now() / 1000) + 86400; // 24 hours from now
-        const prizeAmount = parseEther('100');
+        const prizeAmount = parseEther('1');
 
-        const verificationConfig = getVerificationConfig(0n);
+        const verificationConfig_1 = getVerificationConfig(2n);
+        const verificationConfig_2 = getVerificationConfig(3n);
 
         const maxPerTime = 10n;
         const maxPerDay = 100n;
 
         // Get verification config from deployments
-        console.log('Using verification config:', verificationConfig);
+        console.log('Using verification config:', verificationConfig_1);
 
         // await getTestToken(prizeAmount);
         await createTask(
@@ -215,7 +216,18 @@ async function main() {
             styleCommit,
             deadline,
             prizeAmount,
-            verificationConfig,
+            verificationConfig_1,
+            maxPerTime,
+            maxPerDay
+        );
+
+        // await getTestToken(prizeAmount);
+        await createTask(
+            criteria,
+            styleCommit,
+            deadline,
+            prizeAmount,
+            verificationConfig_2,
             maxPerTime,
             maxPerDay
         );
