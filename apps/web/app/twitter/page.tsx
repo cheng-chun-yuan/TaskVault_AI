@@ -3,7 +3,7 @@
 import { useState } from "react";
 import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
 import { useAccount } from "wagmi";
-// zkVerify integration removed for simplicity;
+import { zkVerifySession, Library, CurveType, ZkVerifyEvents } from "zkverifyjs";
 
 const blueprintSlug = "wryonik/twitter@v3";
 
@@ -14,7 +14,7 @@ export default function Home() {
   const [fileContent, setFileContent] = useState("");
   const [isLoading, setIsLoading] = useState<"client" | "server" | "verifying" | null>(null);
   const [proof, setProof] = useState<Proof | null>(null);
-  // zkVerify functionality simplified for now
+  const [verificationStatus, setVerificationStatus] = useState<string>("");
 
   const externalInputs: ExternalInputInput[] = [
     { name: "address", value: address || "", maxLength: 1094 },
@@ -58,9 +58,46 @@ export default function Home() {
       console.log("Got proof:", generatedProof);
       setProof(generatedProof);
 
-      // Use original on-chain verification
-      const verified = await blueprint.verifyProofOnChain(generatedProof);
-      console.log("Proof verified on-chain:", verified);
+      // Use zkVerify verification
+      setIsLoading("verifying");
+      setVerificationStatus("Starting zkVerify session...");
+      
+      const seedPhrase = process.env.NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE;
+      if (!seedPhrase) {
+        throw new Error("zkVerify seed phrase not configured");
+      }
+
+      const session = await zkVerifySession.start().Volta().withAccount(seedPhrase);
+      
+      setVerificationStatus("Submitting proof to zkVerify...");
+      
+      // Get verification key from blueprint
+      const vkey = await blueprint.getVerifyingKey();
+      
+      const { events } = await session.verify()
+        .groth16({ library: Library.snarkjs, curve: CurveType.bn128 })
+        .execute({
+          proofData: {
+            vk: JSON.parse(vkey),
+            proof: generatedProof.props.proofData,
+            publicSignals: generatedProof.props.publicOutputs
+          }
+        });
+
+      events.on(ZkVerifyEvents.IncludedInBlock, (eventData) => {
+        console.log("Included in block", eventData);
+        setVerificationStatus(`Proof verified and included in block: ${eventData.blockHash}`);
+        session.close().then(r => console.log("zkVerify session closed"));
+      });
+
+      events.on(ZkVerifyEvents.Error, (error) => {
+        console.error("zkVerify error:", error);
+        setVerificationStatus(`Verification failed: ${error.message}`);
+        session.close();
+      });
+
+      setVerificationStatus("Waiting for block inclusion...");
+      console.log("Proof submitted to zkVerify, waiting for inclusion...");
     } catch (err) {
       console.error(`Error generating proof (${mode}):`, err);
       alert("Failed to generate proof. Check the console for details.");
@@ -69,7 +106,6 @@ export default function Home() {
     }
   };
 
-  // zkVerify functionality removed for simplicity
 
   const formatProofAsStr = (proof: Proof) =>
     JSON.stringify(
@@ -124,6 +160,12 @@ export default function Home() {
         {isLoading && (
           <div className="text-sm text-gray-600">
             Please wait, this may take several minutes...
+          </div>
+        )}
+
+        {verificationStatus && (
+          <div className="mt-4 p-3 bg-blue-50 text-blue-800 rounded-lg text-sm">
+            <strong>zkVerify Status:</strong> {verificationStatus}
           </div>
         )}
 
