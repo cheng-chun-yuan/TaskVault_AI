@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import SelfQRcodeWrapper, { countries, SelfApp, SelfAppBuilder } from "@selfxyz/qrcode"
+import SelfQRcodeWrapper, { SelfApp, SelfAppBuilder } from "@selfxyz/qrcode"
 import { countryCodes } from "@selfxyz/core"
 import { useAccount } from "wagmi"
 
@@ -29,19 +29,15 @@ export default function VerificationStep() {
   useEffect(() => {
     if (!address) return
     const app = new SelfAppBuilder({
-      appName: "Test Only(not approve)",
-      scope: "taskvault-test",
-      endpoint: "https://playground.self.xyz/api/verify",
-      endpointType: "https",
-      logoBase64: "https://i.imgur.com/Rz8B3s7.png",
-      userId: address,
-      userIdType: "hex",
+      appName: "TaskVault AI",
+      scope: "taskvault-ai",
       disclosures: {
         minimumAge: formData.minimumAge > 0 ? formData.minimumAge : undefined,
         excludedCountries: formData.excludedCountries,
         ofac: formData.ofac,
+        nationality: true,
+        name: true,
       },
-      devMode: false,
     }).build()
     setSelfApp(app)
   }, [formData.minimumAge, formData.excludedCountries, formData.ofac, address])

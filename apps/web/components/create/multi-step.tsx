@@ -15,7 +15,7 @@ import TaskDetailsStep from "./details"
 import VerificationStep from "./verification"
 import JudgesStep from "./judges"
 import PrizeStep from "./prize"
-import { hashEndpointWithScope, getPackedForbiddenCountries, countries } from "@selfxyz/core"
+import { hashEndpointWithScope, getPackedForbiddenCountries } from "@/lib/self-utils"
 
 function TaskFormContent() {
   const router = useRouter()

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { getUserIdentifier } from '@selfxyz/core';
+// import { SelfBackendVerifier } from '@selfxyz/core'; // Available for future v2 full implementation
 import { createPublicClient, createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { SubmissionRegistryAbi } from '@/content/abi';
@@ -32,9 +32,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Get user address from public signals
-    const address = await getUserIdentifier(publicSignals, "hex");
-    console.log(`Processing verification for task ${taskId} from address ${address}`);
+    // Simple Self v2 compatible verification
+    // Extract user address from public signals
+    const address = publicSignals[0];
+    console.log(`Processing Self v2 verification for task ${taskId} from address ${address}`);
 
     if (!process.env.PRIVATE_KEY) {
       throw new Error('PRIVATE_KEY environment variable is not set');

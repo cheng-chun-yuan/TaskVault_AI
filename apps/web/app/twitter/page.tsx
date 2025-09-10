@@ -3,7 +3,7 @@
 import { useState } from "react";
 import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
 import { useAccount } from "wagmi";
-import { createZkVerifyIntegration, type ZkVerifyResult } from "@/lib/zkverify";
+// zkVerify integration removed for simplicity;
 
 const blueprintSlug = "wryonik/twitter@v3";
 
@@ -14,8 +14,7 @@ export default function Home() {
   const [fileContent, setFileContent] = useState("");
   const [isLoading, setIsLoading] = useState<"client" | "server" | "verifying" | null>(null);
   const [proof, setProof] = useState<Proof | null>(null);
-  const [zkVerifyResult, setZkVerifyResult] = useState<ZkVerifyResult | null>(null);
-  const [useZkVerify, setUseZkVerify] = useState(true);
+  // zkVerify functionality simplified for now
 
   const externalInputs: ExternalInputInput[] = [
     { name: "address", value: address || "", maxLength: 1094 },
@@ -45,7 +44,6 @@ export default function Home() {
     try {
       setIsLoading(mode);
       setProof(null);
-      setZkVerifyResult(null);
 
       const blueprint = await sdk.getBlueprint(blueprintSlug);
       const prover = blueprint.createProver({ isLocal: mode === "client" });
@@ -60,14 +58,9 @@ export default function Home() {
       console.log("Got proof:", generatedProof);
       setProof(generatedProof);
 
-      if (useZkVerify) {
-        // Use zkVerify for verification
-        await verifyWithZkVerify(generatedProof, blueprint);
-      } else {
-        // Use original on-chain verification
-        const verified = await blueprint.verifyProofOnChain(generatedProof);
-        console.log("Proof verified on-chain:", verified);
-      }
+      // Use original on-chain verification
+      const verified = await blueprint.verifyProofOnChain(generatedProof);
+      console.log("Proof verified on-chain:", verified);
     } catch (err) {
       console.error(`Error generating proof (${mode}):`, err);
       alert("Failed to generate proof. Check the console for details.");
@@ -76,35 +69,7 @@ export default function Home() {
     }
   };
 
-  const verifyWithZkVerify = async (proof: Proof, blueprint: any) => {
-    try {
-      setIsLoading("verifying");
-      
-      // Check if zkVerify seed phrase is configured
-      if (!process.env.NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE) {
-        throw new Error("zkVerify seed phrase not configured. Please set NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE environment variable.");
-      }
-
-      const zkVerifyIntegration = createZkVerifyIntegration('Volta');
-      const vkey = await blueprint.getVkey();
-
-      console.log("Verifying proof with zkVerify...");
-      
-      const result = await zkVerifyIntegration.verifyProof(
-        proof, 
-        vkey, 
-        setZkVerifyResult
-      );
-
-      console.log("zkVerify verification completed:", result);
-    } catch (error) {
-      console.error("zkVerify verification failed:", error);
-      setZkVerifyResult({
-        status: 'failed',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  };
+  // zkVerify functionality removed for simplicity
 
   const formatProofAsStr = (proof: Proof) =>
     JSON.stringify(
@@ -130,30 +95,7 @@ export default function Home() {
           1. Send yourself a password reset email from Twitter.<br />
           2. Sign in with Gmail and download the most recent Twitter email.<br />
           3. Upload the email file below.<br />
-          4. Choose verification method and click "Generate Proof".
-        </div>
-
-        {/* Verification Method Toggle */}
-        <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-          <span className="text-sm font-medium">Verification Method:</span>
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              checked={useZkVerify}
-              onChange={() => setUseZkVerify(true)}
-              className="text-violet-600"
-            />
-            <span className="text-sm">zkVerify (Recommended)</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              checked={!useZkVerify}
-              onChange={() => setUseZkVerify(false)}
-              className="text-violet-600"
-            />
-            <span className="text-sm">On-chain</span>
-          </label>
+          4. Click "Generate Proof" to verify ownership of the email and link it to your wallet address using ZK.
         </div>
 
         <input
@@ -181,31 +123,7 @@ export default function Home() {
 
         {isLoading && (
           <div className="text-sm text-gray-600">
-            {isLoading === "client" && "Generating ZK proof in browser, this may take several minutes..."}
-            {isLoading === "server" && "Generating ZK proof on server, this may take several minutes..."}
-            {isLoading === "verifying" && "Verifying proof with zkVerify on Volta network..."}
-          </div>
-        )}
-
-        {zkVerifyResult && (
-          <div className={`p-4 rounded-lg text-sm ${
-            zkVerifyResult.status === 'success' ? 'bg-green-50 text-green-800' :
-            zkVerifyResult.status === 'failed' ? 'bg-red-50 text-red-800' :
-            'bg-yellow-50 text-yellow-800'
-          }`}>
-            <strong className="block mb-2">zkVerify Status: {zkVerifyResult.status.toUpperCase()}</strong>
-            {zkVerifyResult.transactionHash && (
-              <div className="mb-1">Transaction: <span className="font-mono text-xs">{zkVerifyResult.transactionHash}</span></div>
-            )}
-            {zkVerifyResult.blockNumber && (
-              <div className="mb-1">Block: {zkVerifyResult.blockNumber}</div>
-            )}
-            {zkVerifyResult.error && (
-              <div className="text-red-700">Error: {zkVerifyResult.error}</div>
-            )}
-            {zkVerifyResult.status === 'success' && (
-              <div className="mt-2 text-green-700">✅ Proof successfully verified on zkVerify network!</div>
-            )}
+            Please wait, this may take several minutes...
           </div>
         )}
 

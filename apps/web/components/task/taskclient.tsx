@@ -113,18 +113,14 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
     if (!address) return
     const selfApp = new SelfAppBuilder({
       appName: "TaskVault AI",
-      scope: "trustjudge-ai",
-      endpoint: `https://novel-rapidly-panda.ngrok-free.app/api/verify/${taskId}`,
-      endpointType: "https",
-      logoBase64: logo,
-      userId: address,
-      userIdType: "hex",
+      scope: "taskvault-ai",
       disclosures: {
           ...disclosures,
-          minimumAge: disclosures.minimumAge > 0 ? disclosures.minimumAge : undefined
+          minimumAge: disclosures.minimumAge > 0 ? disclosures.minimumAge : undefined,
+          name: true,
+          nationality: true,
       },
-      devMode: false,
-    } as Partial<SelfApp>).build();
+    }).build();
     setSelfApp(selfApp);
   }, [address, taskId]);
 
