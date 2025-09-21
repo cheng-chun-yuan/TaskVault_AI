@@ -45,6 +45,34 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: false,
   
+  // Headers for better caching
+  async headers() {
+    return [
+      {
+        source: '/api/tasks',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=30, stale-while-revalidate=60',
+          },
+        ],
+      },
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          }
+        ],
+      },
+    ]
+  },
+  
   // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],

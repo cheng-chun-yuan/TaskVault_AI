@@ -69,7 +69,7 @@ export default function Home() {
       try {
         // Get verification key from blueprint
         const vkey = await blueprint.getVkey();
-        
+        console.log("Vkey:", vkey);
         setVerificationStatus("Submitting proof to zkVerify (via secure backend)...");
         
         // Submit proof to secure backend API

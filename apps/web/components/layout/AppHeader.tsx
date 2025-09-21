@@ -10,6 +10,7 @@ import { useProfile, useDisplayName } from "@/stores/userStore";
 import { useNotification } from "@/context";
 import { Badge } from "@workspace/ui/components/badge";
 import { Bell, User, Wallet, Trophy, Calendar, LogOut, Twitter, Shield } from "lucide-react";
+import { Logo } from "@/components/task/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +32,8 @@ export default function AppHeader() {
     <header className="border-b shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo / Title */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center">
+          <Logo width={120} height={120} className="h-16 w-auto" />
           <span className="font-mono font-bold text-xl">TaskVault AI</span>
         </Link>
 
@@ -75,88 +77,99 @@ export default function AppHeader() {
               </Button>
               
               {/* User Profile Dropdown */}
-              {profile && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="relative">
-                      <User className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{displayName}</p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                          {profile.address?.slice(0, 6)}...{profile.address?.slice(-4)}
-                        </p>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    
-                    <DropdownMenuItem disabled>
-                      <Trophy className="mr-2 h-4 w-4" />
-                      <span>Reputation: {profile.reputation}</span>
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuItem disabled>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>Tasks Created: {profile.tasksCreated}</span>
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuItem disabled>
-                      <Trophy className="mr-2 h-4 w-4" />
-                      <span>Tasks Completed: {profile.tasksCompleted}</span>
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuItem disabled>
-                      <Wallet className="mr-2 h-4 w-4" />
-                      <span>Total Earned: {profile.totalEarned} ETH</span>
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuSeparator />
-                    
-                    {/* Twitter Verification */}
-                    <DropdownMenuItem asChild>
-                      <Link href="/twitter" className="flex items-center">
-                        <div className="flex items-center gap-2 flex-1">
-                          <div className="flex items-center">
-                            <Twitter className="mr-2 h-4 w-4 text-blue-500" />
-                            <Shield className="h-3 w-3 text-green-500" />
-                          </div>
-                          <span>Verify Twitter Ownership</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="relative">
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {profile ? (
+                    <>
+                      <DropdownMenuLabel>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{displayName}</p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {profile.address?.slice(0, 6)}...{profile.address?.slice(-4)}
+                          </p>
                         </div>
-                        <Badge variant="secondary" className="ml-2 text-xs">
-                          ZK Proof
-                        </Badge>
-                      </Link>
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuSeparator />
-                    
-                    {/* Wallet Selection */}
-                    {wallets.length > 0 && (
-                      <>
-                        <DropdownMenuLabel>Connected Wallets</DropdownMenuLabel>
-                        {wallets.map((wallet) => (
-                          <DropdownMenuItem
-                            key={wallet.address}
-                            onClick={() => setActiveWallet(wallet)}
-                          >
-                            <Wallet className="mr-2 h-4 w-4" />
-                            <span>{shorten(wallet.address)}</span>
-                          </DropdownMenuItem>
-                        ))}
-                        <DropdownMenuSeparator />
-                      </>
-                    )}
-                    
-                    <DropdownMenuItem onClick={logout} className="text-red-600">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Logout</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      
+                      <DropdownMenuItem disabled>
+                        <Trophy className="mr-2 h-4 w-4" />
+                        <span>Reputation: {profile.reputation}</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuItem disabled>
+                        <Calendar className="mr-2 h-4 w-4" />
+                        <span>Tasks Created: {profile.tasksCreated}</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuItem disabled>
+                        <Trophy className="mr-2 h-4 w-4" />
+                        <span>Tasks Completed: {profile.tasksCompleted}</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuItem disabled>
+                        <Wallet className="mr-2 h-4 w-4" />
+                        <span>Total Earned: {profile.totalEarned} ETH</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuSeparator />
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuLabel>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">Loading profile...</p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  
+                  {/* Twitter Verification */}
+                  <DropdownMenuItem asChild>
+                    <Link href="/twitter" className="flex items-center">
+                      <div className="flex items-center gap-2 flex-1">
+                        <div className="flex items-center">
+                          <Twitter className="mr-2 h-4 w-4 text-blue-500" />
+                          <Shield className="h-3 w-3 text-green-500" />
+                        </div>
+                        <span>Verify Twitter Ownership</span>
+                      </div>
+                      <Badge variant="secondary" className="ml-2 text-xs">
+                        ZK Proof
+                      </Badge>
+                    </Link>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Wallet Selection */}
+                  {wallets.length > 0 && (
+                    <>
+                      <DropdownMenuLabel>Connected Wallets</DropdownMenuLabel>
+                      {wallets.map((wallet) => (
+                        <DropdownMenuItem
+                          key={wallet.address}
+                          onClick={() => setActiveWallet(wallet)}
+                        >
+                          <Wallet className="mr-2 h-4 w-4" />
+                          <span>{shorten(wallet.address)}</span>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  
+                  <DropdownMenuItem onClick={logout} className="text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           )}
 

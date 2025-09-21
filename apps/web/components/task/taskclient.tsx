@@ -24,7 +24,6 @@ import {
   Upload,
   User,
 } from "lucide-react";
-import { useAccount } from "wagmi";
 import { useRegistrationStatus, useSelfVerification } from "@/hooks";
 import { SelfQRModal } from "@/components/ui/global";
 
