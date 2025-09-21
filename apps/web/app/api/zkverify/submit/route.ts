@@ -23,10 +23,13 @@ export async function POST(request: Request) {
       )
     }
 
-    // Initialize zkVerify session on server
+    // Initialize zkVerify session with custom network configuration
     const session = await zkVerifySession.start()
-      .Volta()
-      .withAccount(seedPhrase)
+      .Custom({
+        websocket: "wss://testnet-rpc.zkverify.io",
+        rpc: "https://testnet-rpc.zkverify.io"
+      }) // Custom network
+      .withAccount(seedPhrase); // Full session with a single active account
 
     try {
       // Submit proof for verification
