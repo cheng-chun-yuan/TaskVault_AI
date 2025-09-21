@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/button";
 import { countries } from "@selfxyz/qrcode";
@@ -13,7 +13,12 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card";
 import { Badge } from "@workspace/ui/components/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs";
 import {
   Award,
   Calendar,
@@ -26,55 +31,46 @@ import {
 } from "lucide-react";
 import { useRegistrationStatus, useSelfVerification } from "@/hooks";
 import { SelfQRModal } from "@/components/ui/global";
+import { getTaskById } from "@/lib/tasks";
 
-// Mock data - in a real app this would come from an API or blockchain
-const mockTasks = {
-  demo: {
-    id: "demo",
-    title: "Create a Landing Page for DeFi Protocol",
-    description:
-      "Design and implement a responsive landing page for our new DeFi protocol. The page should clearly explain our product, showcase key features, and have a modern design.",
-    criteria: [
-      "Responsive design (mobile, tablet, desktop)",
-      "Clear explanation of the protocol",
-      "Modern and professional UI",
-      "Fast loading time",
-      "Accessible design",
-    ],
-    deadline: "April 15, 2025",
-    prize: "2 ETH",
-    status: "Open",
-    submissions: 3,
-    creator: "0x1234...5678",
-  },
-  new: {
-    id: "new",
-    title: "New Task",
-    description: "This is a newly created task.",
-    criteria: ["Criterion 1", "Criterion 2"],
-    deadline: "April 30, 2025",
-    prize: "0.5 ETH",
-    status: "Open",
-    submissions: 0,
-    creator: "0x1234...5678",
-  },
-};
+interface Submission {
+  id: string;
+  content?: string;
+  score?: string;
+}
+
+interface Task {
+  taskId?: string;
+  id?: string; // Support both taskId and id from different sources
+  title: string;
+  description?: string;
+  criteria?: string[];
+  deadline?: Date | string;
+  tokenAddress?: string;
+  amount?: string | number;
+  styleCommit?: string;
+  taskType?: string;
+  maxPerTime?: string;
+  maxPerDay?: string;
+  createdAt?: Date;
+  createdBy?: string;
+  submissions?: Submission[] | number;
+  status?: "Open" | "Judging" | "Closed" | string;
+  salt?: string;
+}
 
 export default function TaskPageClient({ taskId }: { taskId: string }) {
+  // Move all Hooks to the top and ensure they are always called
   const [showQR, setShowQR] = useState(false);
-  const { isRegistered } = useRegistrationStatus(taskId);
+  const [task, setTask] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(true);
   const [revealStyle, setRevealStyle] = useState(false);
-  const task = mockTasks[taskId as keyof typeof mockTasks] || mockTasks.demo;
-  const statusColor = {
-    Open: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-    Judging:
-      "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300",
-    Closed: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  };
   
+  // Use the modern hooks for registration status and self verification
+  const { isRegistered, isLoading: registrationLoading } = useRegistrationStatus(taskId);
   const { selfApp } = useSelfVerification(
     "TaskVault AI",
-    "taskvault-ai",
+    "trustjudge-ai",
     {
       minimumAge: 18,
       excludedCountries: [
@@ -88,12 +84,71 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
       ofac: true,
       name: true,
       nationality: true,
+      date_of_birth: true,
+    },
+    {
+      endpoint: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://novel-rapidly-panda.ngrok-free.app'}/api/verify/${taskId}`,
+      endpointType: "https",
+      taskId
     }
   );
 
-  const handleSuccess = async () => {
-    console.log("Verification successful");
+  // Fetch task data
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        const fetchedTask = await getTaskById(taskId);
+        if (fetchedTask) {
+          setTask(fetchedTask);
+        }
+      } catch (error) {
+        console.error("Error fetching task:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTask();
+  }, [taskId]);
+
+  const getTimeLeft = (deadline: Date | string): string => {
+    const deadlineDate = new Date(deadline);
+    const diff = deadlineDate.getTime() - Date.now();
+    if (diff <= 0) return "Expired";
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return `${days} days`;
   };
+
+  const handleSuccess = async () => {
+    console.log("Registration successful");
+    // Optionally refetch registration status here if needed
+  };
+
+  const statusColor = {
+    Open: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    Judging:
+      "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300",
+    Closed: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!task) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-xl font-medium mb-2">Task not found</h3>
+        <p className="text-muted-foreground">
+          The requested task could not be found.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-7xl py-10 px-4 md:px-6">
@@ -108,7 +163,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
             </Badge>
             <span className="text-sm text-muted-foreground flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              Deadline: {task.deadline}
+              Deadline: {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'Not set'}
             </span>
           </div>
         </div>
@@ -126,7 +181,6 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
               </Link>
             </Button>
           )}
-
           {task.status === "Judging" && (
             <Button variant="outline" asChild>
               <Link href={`/task/${taskId}/judge`}>
@@ -152,7 +206,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
           <TabsTrigger value="submissions">
             Submissions
             <Badge variant="secondary" className="ml-2">
-              {task.submissions}
+              {Array.isArray(task.submissions) ? task.submissions.length : (task.submissions || 0)}
             </Badge>
           </TabsTrigger>
         </TabsList>
@@ -165,15 +219,15 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{task.description}</p>
-
                 <h3 className="font-semibold mt-6 mb-2">Criteria</h3>
                 <ul className="space-y-1">
-                  {task.criteria.map((criterion, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>{criterion}</span>
-                    </li>
-                  ))}
+                  {Array.isArray(task.criteria) &&
+                    task.criteria.map((criterion, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-primary">•</span>
+                        <span>{criterion}</span>
+                      </li>
+                    ))}
                 </ul>
               </CardContent>
             </Card>
@@ -186,7 +240,9 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-primary" />
-                    <span className="text-xl font-mono">{task.prize}</span>
+                    <span className="text-xl font-mono">
+                      {task.amount} {task.tokenAddress === "0x0" ? "ETH" : task.tokenAddress}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -198,17 +254,17 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Creator</span>
-                    <span className="font-mono text-sm">{task.creator}</span>
+                    <span className="font-mono text-sm">{task.createdBy}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Created</span>
-                    <span>April 1, 2025</span>
+                    <span>{task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'Not available'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Time Left</span>
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      14 days
+                      {task.deadline ? getTimeLeft(task.deadline) : 'No deadline'}
                     </span>
                   </div>
                 </CardContent>
@@ -224,10 +280,13 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
                       <div className="space-y-2">
                         <p className="text-sm">
                           Judge Style:{" "}
-                          <span className="font-mono">strict_technical</span>
+                          <span className="font-mono">{task.styleCommit}</span>
                         </p>
                         <p className="text-sm">
-                          Salt: <span className="font-mono">r4nd0m_s4lt</span>
+                          Salt:{" "}
+                          <span className="font-mono">
+                            {task.salt || "N/A"}
+                          </span>
                         </p>
                       </div>
                     ) : (
@@ -247,9 +306,9 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
         </TabsContent>
 
         <TabsContent value="submissions">
-          {task.submissions > 0 ? (
+          {Array.isArray(task.submissions) && task.submissions.length > 0 ? (
             <div className="space-y-4">
-              {[...Array(task.submissions)].map((_, index) => (
+              {task.submissions.map((submission, index) => (
                 <Card key={index}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
@@ -262,23 +321,20 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
                         </CardTitle>
                         <CardDescription className="flex items-center gap-1 mt-1">
                           <User className="h-3 w-3" />
-                          0x8765...4321
+                          {submission.id.slice(0, 6)}...
+                          {submission.id.slice(-4)}
                         </CardDescription>
                       </div>
                       <Badge variant="outline">
-                        {task.status === "Closed"
-                          ? index === 0
-                            ? "Score: 9.5/10"
-                            : "Score: 7.8/10"
+                        {submission.score
+                          ? `Score: ${submission.score}`
                           : "Pending"}
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">
-                      {index === 0
-                        ? "I've created a responsive landing page with a modern design that clearly explains the protocol's features and benefits."
-                        : "Here's my submission for the landing page design. I focused on making it user-friendly and visually appealing."}
+                      {submission.content || "No content provided"}
                     </p>
                   </CardContent>
                   <CardFooter>

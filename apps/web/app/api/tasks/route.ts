@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         amount: data.amount,
         styleCommit: data.styleCommit!,
         createdBy: data.createdBy,
-        taskType: (data.taskType || 'TELEGRAM_GROUP') as TaskType,
+        taskType: (data.taskType || 'TWITTER_INTERACT') as TaskType,
         telegramChatId: data.telegramChatId,
         submissionTag: data.submissionTag,
         rewardTiming: (data.rewardTiming || 'INSTANT') as RewardTiming,

@@ -54,12 +54,14 @@ model Task {
   tokenAddress   String
   amount         String
   styleCommit    String
-  taskType       TaskType     @default(TELEGRAM_GROUP)
+  taskType       TaskType     @default(TWITTER_INTERACT)
   telegramChatId String?      // Optional Telegram chat ID for TELEGRAM_GROUP tasks
   submissionTag  String?      // Specific tag users must include in Telegram submissions
   rewardTiming   RewardTiming @default(INSTANT)
   isActive       Boolean      @default(true)
   maxParticipants Int?        // Optional limit on participants
+  maxPerTime     String?
+  maxPerDay      String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   creator        User         @relation("CreatedBy", fields: [createdBy], references: [walletAddress])
