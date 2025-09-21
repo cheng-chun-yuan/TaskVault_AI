@@ -9,7 +9,7 @@ import { Button } from "@workspace/ui/components/button";
 import { useProfile, useDisplayName } from "@/stores/userStore";
 import { useNotification } from "@/context";
 import { Badge } from "@workspace/ui/components/badge";
-import { Bell, User, Wallet, Trophy, Calendar, LogOut } from "lucide-react";
+import { Bell, User, Wallet, Trophy, Calendar, LogOut, Twitter, Shield } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -111,6 +111,24 @@ export default function AppHeader() {
                     <DropdownMenuItem disabled>
                       <Wallet className="mr-2 h-4 w-4" />
                       <span>Total Earned: {profile.totalEarned} ETH</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Twitter Verification */}
+                    <DropdownMenuItem asChild>
+                      <Link href="/twitter" className="flex items-center">
+                        <div className="flex items-center gap-2 flex-1">
+                          <div className="flex items-center">
+                            <Twitter className="mr-2 h-4 w-4 text-blue-500" />
+                            <Shield className="h-3 w-3 text-green-500" />
+                          </div>
+                          <span>Verify Twitter Ownership</span>
+                        </div>
+                        <Badge variant="secondary" className="ml-2 text-xs">
+                          ZK Proof
+                        </Badge>
+                      </Link>
                     </DropdownMenuItem>
                     
                     <DropdownMenuSeparator />
