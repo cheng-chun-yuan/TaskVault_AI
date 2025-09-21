@@ -4,6 +4,8 @@ import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
 import { TaskCard } from "@/components/common"
 import { useTasks } from "@/hooks"
+import { LoadingSpinner, EmptyState } from "@/components/ui/feedback"
+import { FileText, Plus } from "lucide-react"
 
 export default function TasksPage() {
   const { data: filteredTasks = [], isLoading } = useTasks()
@@ -22,8 +24,8 @@ export default function TasksPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        <div className="flex flex-col items-center justify-center py-12">
+          <LoadingSpinner size="lg" />
           <p className="mt-4 text-muted-foreground">Loading tasks...</p>
         </div>
       ) : filteredTasks.length > 0 ? (
@@ -43,14 +45,16 @@ export default function TasksPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">📝</div>
-          <h3 className="text-xl font-semibold mb-2">No tasks available</h3>
-          <p className="text-muted-foreground mb-6">Be the first to create a task and start building the future!</p>
-          <Button asChild>
-            <Link href="/create">Create First Task</Link>
-          </Button>
-        </div>
+        <EmptyState
+          icon={FileText}
+          title="No tasks available"
+          description="Be the first to create a task and start building the future! Join our community of builders and innovators."
+          action={{
+            label: "Create First Task",
+            href: "/create"
+          }}
+          size="lg"
+        />
       )}
     </div>
   )
