@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import SelfQRcodeWrapper from "@selfxyz/qrcode"
+import SelfQRcodeWrapper, { SelfApp } from "@selfxyz/qrcode"
 import { 
   Dialog, 
   DialogContent, 
@@ -15,7 +15,7 @@ import { X } from "lucide-react"
 interface SelfQRModalProps {
   isOpen: boolean
   onClose: () => void
-  selfApp: any
+  selfApp: SelfApp | null
   onSuccess?: () => void
   title?: string
   description?: string
@@ -78,7 +78,7 @@ export function SelfQRModal({
           )}
           
           <div className="text-xs text-center text-muted-foreground max-w-sm">
-            Don't have the Self app? Download it from the{" "}
+            Don&apos;t have the Self app? Download it from the{" "}
             <a 
               href="https://apps.apple.com/app/self-app/id1234567890"
               target="_blank"

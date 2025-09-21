@@ -67,7 +67,7 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
   const [revealStyle, setRevealStyle] = useState(false);
   
   // Use the modern hooks for registration status and self verification
-  const { isRegistered, isLoading: registrationLoading } = useRegistrationStatus(taskId);
+  const { isRegistered } = useRegistrationStatus(taskId);
   const { selfApp } = useSelfVerification(
     "TaskVault AI",
     "trustjudge-ai",

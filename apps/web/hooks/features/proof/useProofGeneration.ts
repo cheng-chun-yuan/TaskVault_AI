@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
+import { default as zkeSdk, Proof, ExternalInputInput } from "@zk-email/sdk";
 import { useWalletAddress } from "@/hooks/core/useWallet";
 import { useAsync } from "@/hooks/core/useAsync";
 import type { LoadingMode } from "@/types";

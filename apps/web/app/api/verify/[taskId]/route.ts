@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { SelfBackendVerifier } from '@selfxyz/core';
 import { createPublicClient, createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { SubmissionRegistryAbi } from '@/content/abi';
@@ -107,23 +106,17 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Verification failed:", error);
     
-    // Determine error type and provide appropriate message
-    let errorMessage = 'Unknown error occurred';
-    let errorDetails = {};
-    
+    // Log error details for debugging
     if (error instanceof Error) {
-      errorMessage = error.message;
+      console.error('Error details:', error.message);
       if ('cause' in error) {
-        // Convert any BigInt values in the error cause to strings
         const cause = error.cause as Record<string, unknown>;
-        errorDetails = {
-          cause: Object.fromEntries(
-            Object.entries(cause).map(([key, value]) => [
-              key,
-              typeof value === 'bigint' ? value.toString() : value
-            ])
-          )
-        };
+        console.error('Error cause:', Object.fromEntries(
+          Object.entries(cause).map(([key, value]) => [
+            key,
+            typeof value === 'bigint' ? value.toString() : value
+          ])
+        ));
       }
     }
 

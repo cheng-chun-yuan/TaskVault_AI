@@ -7,7 +7,7 @@ import { database } from '@/lib/env'
  * @param handler - The actual API route handler function
  * @returns Wrapped handler with database validation
  */
-export function withDatabase<T extends any[]>(
+export function withDatabase<T extends unknown[]>(
   handler: (...args: T) => Promise<NextResponse>
 ) {
   return async (...args: T): Promise<NextResponse> => {
