@@ -58,39 +58,66 @@ export default function Home() {
       console.log("Got proof:", generatedProof);
       setProof(generatedProof);
 
-      // Use zkVerify verification
+      // Use zkVerify verification following official documentation
       setIsLoading("verifying");
       setVerificationStatus("Starting zkVerify session...");
       
       const seedPhrase = process.env.NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE;
       if (!seedPhrase) {
-        throw new Error("zkVerify seed phrase not configured");
+        throw new Error("zkVerify seed phrase not configured. Please add NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE to your environment variables.");
       }
 
-      const session = await zkVerifySession.start().Volta().withAccount(seedPhrase);
+      // Initialize zkVerify session with Volta testnet
+      const session = await zkVerifySession.start()
+        .Volta()
+        .withAccount(seedPhrase);
       
       setVerificationStatus("Submitting proof to zkVerify...");
       
-      const { events } = await session.verify()
-        .groth16({ library: Library.snarkjs, curve: CurveType.bn128 })
-        .execute({
-          proofData: {
-            vk: await blueprint.getVkey(),
-            proof: generatedProof.props.proofData,
-            publicSignals: generatedProof.props.publicOutputs
-          }
+      try {
+        // Get verification key from blueprint
+        const vkey = await blueprint.getVkey();
+        
+        // Submit proof for verification
+        const { events } = await session.verify()
+          .groth16({ 
+            library: Library.snarkjs, 
+            curve: CurveType.bn128 
+          })
+          .execute({
+            proofData: {
+              vk: vkey,
+              proof: generatedProof.props.proofData,
+              publicSignals: generatedProof.props.publicOutputs
+            }
+          });
+
+        // Handle successful inclusion in block
+        events.on(ZkVerifyEvents.IncludedInBlock, (eventData) => {
+          console.log("Proof included in block:", eventData);
+          setVerificationStatus(`✅ Proof verified and included in block: ${eventData.blockHash}`);
+          console.log("Transaction hash:", eventData.txHash);
+          
+          // Close session after successful verification
+          session.close().then(() => {
+            console.log("zkVerify session closed successfully");
+            setIsLoading(null);
+          }).catch(console.error);
         });
 
-      events.on(ZkVerifyEvents.IncludedInBlock, (eventData) => {
-        console.log("Included in block", eventData);
-        setVerificationStatus(`Proof verified and included in block: ${eventData.blockHash}`);
-        session.close().then(r => console.log("zkVerify session closed"));
-      });
+        // Handle errors during verification
+        // Note: Error event handling to be implemented based on zkVerify API updates
 
-      // TODO: Add proper error handling for zkVerify events
-
-      setVerificationStatus("Waiting for block inclusion...");
-      console.log("Proof submitted to zkVerify, waiting for inclusion...");
+        setVerificationStatus("⏳ Waiting for block inclusion...");
+        console.log("Proof submitted to zkVerify, waiting for inclusion...");
+        
+      } catch (submitError) {
+        console.error("Error submitting proof to zkVerify:", submitError);
+        const errorMessage = submitError instanceof Error ? submitError.message : 'Unknown error';
+        setVerificationStatus(`❌ Failed to submit proof: ${errorMessage}`);
+        session.close();
+        setIsLoading(null);
+      }
     } catch (err) {
       console.error(`Error generating proof (${mode}):`, err);
       alert("Failed to generate proof. Check the console for details.");
