@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/userStore"
 import { useTaskStore } from "@/stores/taskStore"
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const { ready, authenticated, user } = usePrivy()
+  const { ready, authenticated } = usePrivy()
   const { wallets } = useWallets()
   const loadUserProfile = useUserStore(state => state.loadUserProfile)
   const setProfile = useUserStore(state => state.setProfile)

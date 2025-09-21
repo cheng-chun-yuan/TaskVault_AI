@@ -3,7 +3,14 @@ import prisma from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const users = await prisma.user.findMany({
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
+    const users = await prisma!.user.findMany({
       include: {
         createdTasks: {
           select: {
@@ -41,6 +48,13 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { walletAddress } = await req.json()
     
     if (!walletAddress) {
@@ -51,7 +65,7 @@ export async function POST(req: Request) {
     }
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma!.user.findUnique({
       where: { walletAddress }
     })
 
@@ -60,7 +74,7 @@ export async function POST(req: Request) {
     }
 
     // Create new user
-    const user = await prisma.user.create({
+    const user = await prisma!.user.create({
       data: {
         walletAddress,
       },

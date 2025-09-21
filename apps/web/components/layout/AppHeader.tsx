@@ -12,7 +12,6 @@ import { useNotification } from "@/context";
 import { Badge } from "@workspace/ui/components/badge";
 import { Bell, User, Wallet, Trophy, Calendar, LogOut, Twitter, Shield, Menu, X } from "lucide-react";
 import { Logo } from "@/components/task/logo";
-import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,

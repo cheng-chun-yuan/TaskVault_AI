@@ -8,9 +8,7 @@ import { Check, Clock, Tag } from "lucide-react"
 
 interface JoinTaskButtonProps {
   taskId: string
-  taskTitle: string
   submissionTag?: string
-  telegramChatId?: string
   rewardTiming: 'INSTANT' | 'POST_EVENT'
   criteria: string[]
   isActive: boolean
@@ -19,9 +17,7 @@ interface JoinTaskButtonProps {
 
 export function JoinTaskButton({ 
   taskId, 
-  taskTitle, 
   submissionTag,
-  telegramChatId,
   rewardTiming,
   criteria,
   isActive,
@@ -59,8 +55,8 @@ export function JoinTaskButton({
 
       setHasJoined(true)
       success("Success", data.instructions.message)
-    } catch (err: any) {
-      error("Error", err.message)
+    } catch (err: unknown) {
+      error("Error", err instanceof Error ? err.message : "An unknown error occurred")
     } finally {
       setIsJoining(false)
     }

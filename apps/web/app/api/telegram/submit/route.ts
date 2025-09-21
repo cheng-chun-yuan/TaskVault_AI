@@ -4,6 +4,13 @@ import prisma from '@/lib/prisma'
 // This endpoint would be called by a Telegram bot monitoring the group
 export async function POST(request: Request) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { 
       messageContent, 
       telegramUserId, 
@@ -125,6 +132,10 @@ export async function POST(request: Request) {
 // AI judging function
 async function judgeSubmissionWithAI(submissionId: string, content: string, criteria: string[]) {
   try {
+    if (!prisma) {
+      throw new Error('Database not configured')
+    }
+
     // Simulate AI judging (in production, you'd call OpenAI API or similar)
     const aiScore = Math.random() * 100 // Random score for demo
     const isApproved = aiScore >= 70 // Approve if score >= 70
@@ -159,8 +170,12 @@ async function judgeSubmissionWithAI(submissionId: string, content: string, crit
 }
 
 // Reward distribution function
-async function distributeReward(submission: any) {
+async function distributeReward(submission: { id: string; user?: { walletAddress: string }; task?: { amount: string } }) {
   try {
+    if (!prisma) {
+      throw new Error('Database not configured')
+    }
+
     // Simulate reward distribution (in production, you'd interact with smart contracts)
     const txHash = `0x${Math.random().toString(16).substring(2, 66)}`
     
@@ -172,7 +187,7 @@ async function distributeReward(submission: any) {
       }
     })
 
-    console.log(`Reward distributed to ${submission.user.walletAddress}: ${submission.task.amount} tokens`)
+    console.log(`Reward distributed to ${submission.user?.walletAddress}: ${submission.task?.amount} tokens`)
   } catch (error) {
     console.error('Error distributing reward:', error)
   }

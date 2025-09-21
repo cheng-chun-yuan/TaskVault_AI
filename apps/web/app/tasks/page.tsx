@@ -1,16 +1,16 @@
 "use client"
 
+import dynamicImport from "next/dynamic"
 import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
-import { TaskCard } from "@/components/common"
-import { useTasks } from "@/hooks"
-import { LoadingSpinner, EmptyState } from "@/components/ui/feedback"
-import { FileText, Plus } from "lucide-react"
+
+// Force dynamic rendering to prevent SSR issues with web3 hooks and zkEmail SDK
+export const dynamic = 'force-dynamic'
+
+// Dynamically import the component that uses React Query hooks
+const TasksPageContent = dynamicImport(() => import("./TasksPageContent"), { ssr: false });
 
 export default function TasksPage() {
-  const { data: filteredTasks = [], isLoading } = useTasks()
-  
-
   return (
     <div className="container mx-auto max-w-7xl py-10 px-4 md:px-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -23,39 +23,7 @@ export default function TasksPage() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-12">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-muted-foreground">Loading tasks...</p>
-        </div>
-      ) : filteredTasks.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              id={task.id}
-              title={task.title}
-              description={task.description}
-              deadline={task.deadline.toLocaleDateString()}
-              prize={`${task.prize} ETH`}
-              status={task.status}
-              submissions={task.submissions}
-              creator={task.creator}
-            />
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          icon={FileText}
-          title="No tasks available"
-          description="Be the first to create a task and start building the future! Join our community of builders and innovators."
-          action={{
-            label: "Create First Task",
-            href: "/create"
-          }}
-          size="lg"
-        />
-      )}
+      <TasksPageContent />
     </div>
   )
 }

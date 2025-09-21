@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
 import { useWalletAddress } from "@/hooks/core/useWallet";
 import { useAsync } from "@/hooks/core/useAsync";
@@ -26,10 +26,17 @@ export function useProofGeneration({
   const [isLoading, setIsLoading] = useState<LoadingMode>(null);
   const [verificationStatus, setVerificationStatus] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
+  const [sdk, setSdk] = useState<ReturnType<typeof zkeSdk> | null>(null);
 
   const address = useWalletAddress();
   const { execute: executeAsync } = useAsync();
-  const sdk = zkeSdk();
+
+  // Initialize SDK only on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSdk(zkeSdk());
+    }
+  }, []);
 
   const externalInputs: ExternalInputInput[] = [
     { name: "address", value: address || "", maxLength: 64 },
@@ -37,11 +44,15 @@ export function useProofGeneration({
 
   const generateProof = async (mode: "client" | "server") => {
     if (!fileContent) {
-      alert("Please upload a Twitter email first.");
+      console.warn("Please upload a Twitter email first.");
       return;
     }
     if (!address) {
-      alert("Please connect your wallet first.");
+      console.warn("Please connect your wallet first.");
+      return;
+    }
+    if (!sdk) {
+      console.warn("SDK not initialized yet. Please wait...");
       return;
     }
 
@@ -110,7 +121,7 @@ export function useProofGeneration({
       }
     } catch (err) {
       console.error(`Error generating proof (${mode}):`, err);
-      alert("Failed to generate proof. Check the console for details.");
+      setVerificationStatus(`❌ Failed to generate proof: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsLoading(null);
     }

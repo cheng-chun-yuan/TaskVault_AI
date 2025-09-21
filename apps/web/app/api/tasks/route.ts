@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { database } from '@/lib/env'
 import type { TaskData } from '@/lib/utils'
 import type { TaskType } from '@/types/task-form'
 import type { RewardTiming } from '@prisma/client'
 
 // Simple in-memory cache with TTL
-const cache = new Map<string, { data: any; timestamp: number }>()
+const cache = new Map<string, { data: unknown; timestamp: number }>()
 const CACHE_TTL = 30 * 1000 // 30 seconds cache
 
 export async function POST(req: Request) {
   try {
     // Check if database is configured
-    if (!process.env.DATABASE_URL || !prisma) {
+    if (!database.url || !prisma) {
       return NextResponse.json(
         { error: 'Database not configured' },
         { status: 503 }
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
 export async function GET(request: Request) {
   try {
     // Check if database is configured
-    if (!process.env.DATABASE_URL || !prisma) {
+    if (!database.url || !prisma) {
       // Return mock data for development when DB is not configured
       return NextResponse.json({
         tasks: [],
@@ -63,11 +64,10 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status')
     const taskType = searchParams.get('taskType')
     const creator = searchParams.get('creator')
     const sortBy = searchParams.get('sortBy') || 'createdAt'
-    const order = searchParams.get('order') || 'desc'
+    const order = (searchParams.get('order') || 'desc') as 'asc' | 'desc'
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
     const search = searchParams.get('search')
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
     }
 
     // Build where clause
-    const where: any = {}
+    const where: Record<string, unknown> = {}
     
     if (taskType) {
       where.taskType = taskType
@@ -100,7 +100,7 @@ export async function GET(request: Request) {
     }
 
     // Build orderBy clause
-    const orderBy: any = {}
+    const orderBy: Record<string, 'asc' | 'desc'> = {}
     switch (sortBy) {
       case 'deadline':
         orderBy.deadline = order

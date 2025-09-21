@@ -29,7 +29,7 @@ function TaskFormContent() {
     if (!formData.tokenAddress) {
       updateFormData("tokenAddress", ERC20Mock)
     }
-  }, [])
+  }, [formData.tokenAddress, updateFormData])
   const { address } = useAccount()
   const { writeContractAsync } = useWriteContract()
   const publicClient = usePublicClient()
@@ -87,7 +87,7 @@ function TaskFormContent() {
     }
 
     saveTaskToDB()
-  }, [address, formData, router])
+  }, [isConfirmed, address, formData, router, addActivity, error, taskCreated])
 
   const { checkAndApproveToken } = useTokenApproval()
 

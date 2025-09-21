@@ -6,6 +6,13 @@ export async function GET(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { address } = await params
     
     const user = await prisma.user.findUnique({
@@ -93,8 +100,15 @@ export async function PATCH(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { address } = await params
-    const updates = await request.json()
+    await request.json()
     
     // For now, we'll just store preferences in a separate table or extend the user model
     // This is a placeholder for profile updates

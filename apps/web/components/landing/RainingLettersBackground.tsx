@@ -95,14 +95,6 @@ const RainingLettersBackground = ({ children }: { children: React.ReactNode }) =
 
       {/* Slot content */}
       <div className="relative z-20">{children}</div>
-
-      {/* Global style for dud text */}
-      <style jsx global>{`
-        .dud {
-          color: #0f0;
-          opacity: 0.7;
-        }
-      `}</style>
     </section>
   )
 }

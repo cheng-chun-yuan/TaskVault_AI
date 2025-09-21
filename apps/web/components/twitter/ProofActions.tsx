@@ -22,6 +22,8 @@ export function ProofActions({ proof, txHash }: ProofActionsProps) {
   };
 
   const handleViewExplorer = () => {
+    if (typeof window === 'undefined') return;
+    
     const explorerUrl = txHash 
       ? `https://zkverify-testnet.subscan.io/extrinsic/${txHash}`
       : 'https://zkverify-testnet.subscan.io';

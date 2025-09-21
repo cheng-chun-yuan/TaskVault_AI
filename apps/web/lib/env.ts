@@ -28,13 +28,6 @@ interface EnvConfig {
   };
 }
 
-function getEnvVar(name: string, defaultValue?: string): string {
-  const value = process.env[name];
-  if (!value && defaultValue === undefined) {
-    throw new Error(`Environment variable ${name} is required but not set`);
-  }
-  return value || defaultValue!;
-}
 
 function getOptionalEnvVar(name: string, defaultValue: string = ''): string {
   return process.env[name] || defaultValue;

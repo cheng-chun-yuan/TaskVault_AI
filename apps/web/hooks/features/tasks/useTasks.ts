@@ -31,6 +31,7 @@ interface TaskFilter {
   maxPrize?: number
   creator?: string
   sortBy?: "newest" | "oldest" | "prize_high" | "prize_low" | "deadline"
+  [key: string]: unknown
 }
 
 // Fetch functions

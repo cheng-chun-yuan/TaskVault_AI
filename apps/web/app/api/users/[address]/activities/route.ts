@@ -6,13 +6,20 @@ export async function GET(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { address } = await params
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
     
     // Get user
-    const user = await prisma.user.findUnique({
+    const user = await prisma!.user.findUnique({
       where: { walletAddress: address }
     })
 
@@ -25,7 +32,7 @@ export async function GET(
 
     // Get user's activities from tasks and submissions
     const [createdTasks, submissions] = await Promise.all([
-      prisma.task.findMany({
+      prisma!.task.findMany({
         where: { createdBy: address },
         select: {
           taskId: true,
@@ -36,7 +43,7 @@ export async function GET(
         },
         orderBy: { createdAt: 'desc' }
       }),
-      prisma.submission.findMany({
+      prisma!.submission.findMany({
         where: { userId: user.id },
         select: {
           id: true,
@@ -99,11 +106,18 @@ export async function POST(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { address } = await params
     const { type, title, description, amount, taskId } = await request.json()
     
     // Get user
-    const user = await prisma.user.findUnique({
+    const user = await prisma!.user.findUnique({
       where: { walletAddress: address }
     })
 

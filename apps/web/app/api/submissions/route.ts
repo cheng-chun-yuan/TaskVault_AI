@@ -3,11 +3,18 @@ import prisma from '@/lib/prisma'
 
 export async function GET(request: Request) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const taskId = searchParams.get('taskId')
     const userId = searchParams.get('userId')
     
-    const where: any = {}
+    const where: Record<string, string> = {}
     if (taskId) where.taskId = taskId
     if (userId) where.userId = userId
 
@@ -43,6 +50,13 @@ export async function GET(request: Request) {
 
 export async function POST(req: Request) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { taskId, userId, contentHash } = await req.json()
     
     if (!taskId || !userId || !contentHash) {

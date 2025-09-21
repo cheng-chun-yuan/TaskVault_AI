@@ -125,3 +125,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Raining letters animation styles */
+.dud {
+  color: #0f0;
+  opacity: 0.7;
+}

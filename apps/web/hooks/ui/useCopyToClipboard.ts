@@ -9,6 +9,11 @@ export function useCopyToClipboard(): UseCopyToClipboardReturn {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async (text: string) => {
+    if (typeof window === 'undefined' || !navigator.clipboard) {
+      console.warn("Clipboard API not available");
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(text);
       setIsCopied(true);
