@@ -10,6 +10,14 @@ const CACHE_TTL = 30 * 1000 // 30 seconds cache
 
 export async function POST(req: Request) {
   try {
+    // Check if database is configured
+    if (!process.env.DATABASE_URL || !prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+
     const data: TaskData = await req.json()
     
     const task = await prisma.task.create({
@@ -44,6 +52,16 @@ export async function POST(req: Request) {
 
 export async function GET(request: Request) {
   try {
+    // Check if database is configured
+    if (!process.env.DATABASE_URL || !prisma) {
+      // Return mock data for development when DB is not configured
+      return NextResponse.json({
+        tasks: [],
+        total: 0,
+        hasMore: false
+      })
+    }
+
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const taskType = searchParams.get('taskType')

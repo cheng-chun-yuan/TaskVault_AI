@@ -42,15 +42,15 @@ function getOptionalEnvVar(name: string, defaultValue: string = ''): string {
 
 export const env: EnvConfig = {
   database: {
-    url: getEnvVar('DATABASE_URL'),
+    url: getOptionalEnvVar('DATABASE_URL', ''),
   },
   
   blockchain: {
-    privateKey: getEnvVar('PRIVATE_KEY'),
+    privateKey: getOptionalEnvVar('PRIVATE_KEY', ''),
   },
   
   zkVerify: {
-    seedPhrase: getEnvVar('ZKVERIFY_SEED_PHRASE'),
+    seedPhrase: getOptionalEnvVar('ZKVERIFY_SEED_PHRASE', ''),
   },
   
   app: {

@@ -5,10 +5,15 @@ const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };
 
-const prisma = globalForPrisma.prisma || new PrismaClient()
+// Only create Prisma client if DATABASE_URL is configured
+let prisma: PrismaClient | null = null
 
-if (!app.isProduction) {
-  globalForPrisma.prisma = prisma
+if (process.env.DATABASE_URL) {
+  prisma = globalForPrisma.prisma || new PrismaClient()
+  
+  if (!app.isProduction) {
+    globalForPrisma.prisma = prisma
+  }
 }
 
 export default prisma

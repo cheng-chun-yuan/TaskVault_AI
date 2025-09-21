@@ -7,7 +7,7 @@ import { TwitterUploadCard } from "@/components/twitter/TwitterUploadCard";
 import { TwitterProofDisplay } from "@/components/twitter/TwitterProofDisplay";
 import { useFileUpload, useProofGeneration, useWalletAddress } from "@/hooks";
 
-export default function Home() {
+export default function TwitterPage() {
   // Custom hooks for cleaner state management
   const address = useWalletAddress();
   const { fileContent, handleFileUpload } = useFileUpload();
