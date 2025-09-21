@@ -3,7 +3,7 @@
 import { useState } from "react";
 import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
 import { useAccount } from "wagmi";
-import { zkVerifySession, Library, CurveType, ZkVerifyEvents } from "zkverifyjs";
+// Note: zkVerify integration now handled securely via backend API
 
 const blueprintSlug = "wryonik/twitter@v3";
 
@@ -58,64 +58,49 @@ export default function Home() {
       console.log("Got proof:", generatedProof);
       setProof(generatedProof);
 
-      // Use zkVerify verification following official documentation
+      // Use secure backend zkVerify verification
       setIsLoading("verifying");
-      setVerificationStatus("Starting zkVerify session...");
-      
-      const seedPhrase = process.env.NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE;
-      if (!seedPhrase) {
-        throw new Error("zkVerify seed phrase not configured. Please add NEXT_PUBLIC_ZKVERIFY_SEED_PHRASE to your environment variables.");
-      }
-
-      // Initialize zkVerify session with Volta testnet
-      const session = await zkVerifySession.start()
-        .Volta()
-        .withAccount(seedPhrase);
-      
-      setVerificationStatus("Submitting proof to zkVerify...");
+      setVerificationStatus("Preparing proof for verification...");
       
       try {
         // Get verification key from blueprint
         const vkey = await blueprint.getVkey();
         
-        // Submit proof for verification
-        const { events } = await session.verify()
-          .groth16({ 
-            library: Library.snarkjs, 
-            curve: CurveType.bn128 
+        setVerificationStatus("Submitting proof to zkVerify (via secure backend)...");
+        
+        // Submit proof to secure backend API
+        const response = await fetch('/api/zkverify/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            vkey: vkey,
+            proof: generatedProof.props.proofData,
+            publicSignals: generatedProof.props.publicOutputs
           })
-          .execute({
-            proofData: {
-              vk: vkey,
-              proof: generatedProof.props.proofData,
-              publicSignals: generatedProof.props.publicOutputs
-            }
-          });
-
-        // Handle successful inclusion in block
-        events.on(ZkVerifyEvents.IncludedInBlock, (eventData) => {
-          console.log("Proof included in block:", eventData);
-          setVerificationStatus(`✅ Proof verified and included in block: ${eventData.blockHash}`);
-          console.log("Transaction hash:", eventData.txHash);
-          
-          // Close session after successful verification
-          session.close().then(() => {
-            console.log("zkVerify session closed successfully");
-            setIsLoading(null);
-          }).catch(console.error);
         });
 
-        // Handle errors during verification
-        // Note: Error event handling to be implemented based on zkVerify API updates
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
 
-        setVerificationStatus("⏳ Waiting for block inclusion...");
-        console.log("Proof submitted to zkVerify, waiting for inclusion...");
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log("Proof verified successfully:", result);
+          setVerificationStatus(`✅ Proof verified and included in block: ${result.blockHash}`);
+          console.log("Transaction hash:", result.txHash);
+        } else {
+          throw new Error(result.error || 'Verification failed');
+        }
         
       } catch (submitError) {
-        console.error("Error submitting proof to zkVerify:", submitError);
+        console.error("Error submitting proof for verification:", submitError);
         const errorMessage = submitError instanceof Error ? submitError.message : 'Unknown error';
-        setVerificationStatus(`❌ Failed to submit proof: ${errorMessage}`);
-        session.close();
+        setVerificationStatus(`❌ Failed to verify proof: ${errorMessage}`);
+      } finally {
         setIsLoading(null);
       }
     } catch (err) {
