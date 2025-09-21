@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/button";
-import SelfQRcodeWrapper, { countries, SelfApp, SelfAppBuilder } from "@selfxyz/qrcode";
+import { countries } from "@selfxyz/qrcode";
 import {
   Card,
   CardContent,
@@ -24,10 +24,9 @@ import {
   Upload,
   User,
 } from "lucide-react";
-import { logo } from "@/components/task/logo";
-import { useAccount, usePublicClient } from "wagmi";
-import { SubmissionRegistry } from "@/content/address";
-import { SubmissionRegistryAbi } from "@/content/abi";
+import { useAccount } from "wagmi";
+import { useRegistrationStatus, useSelfVerification } from "@/hooks";
+import { SelfQRModal } from "@/components/ui/global";
 
 // Mock data - in a real app this would come from an API or blockchain
 const mockTasks = {
@@ -64,29 +63,7 @@ const mockTasks = {
 
 export default function TaskPageClient({ taskId }: { taskId: string }) {
   const [showQR, setShowQR] = useState(false);
-  const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
-  const [isRegistered, setIsRegistered] = useState(false);
-  const { address, isConnected } = useAccount();
-  const publicClient = usePublicClient();
-
-  useEffect(() => {
-    const checkRegistration = async () => {
-      if (!address || !publicClient || !isConnected) return;
-      try {
-        const isRegistered = await publicClient.readContract({
-          address: SubmissionRegistry,
-          abi: SubmissionRegistryAbi,
-          functionName: 'verifiedUsers',
-          args: [taskId, address],
-        }) as boolean;
-        setIsRegistered(isRegistered);
-      } catch (error) {
-        console.error('Error checking registration:', error);
-        setIsRegistered(false);
-      }
-    };
-    checkRegistration();
-  }, [address, publicClient, taskId]);
+  const { isRegistered } = useRegistrationStatus(taskId);
   const [revealStyle, setRevealStyle] = useState(false);
   const task = mockTasks[taskId as keyof typeof mockTasks] || mockTasks.demo;
   const statusColor = {
@@ -95,34 +72,25 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
       "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300",
     Closed: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
   };
-  const disclosures = {
-    // Custom checks
-    minimumAge: 18,
-    excludedCountries: [
-      countries.IRAN,
-      countries.IRAQ,
-      countries.NORTH_KOREA,
-      countries.RUSSIA,
-      countries.SYRIAN_ARAB_REPUBLIC,
-      countries.VENEZUELA
-    ],
-    ofac: true,
-  };
-
-  useEffect(() => {
-    if (!address) return
-    const selfApp = new SelfAppBuilder({
-      appName: "TaskVault AI",
-      scope: "taskvault-ai",
-      disclosures: {
-          ...disclosures,
-          minimumAge: disclosures.minimumAge > 0 ? disclosures.minimumAge : undefined,
-          name: true,
-          nationality: true,
-      },
-    }).build();
-    setSelfApp(selfApp);
-  }, [address, taskId]);
+  
+  const { selfApp } = useSelfVerification(
+    "TaskVault AI",
+    "taskvault-ai",
+    {
+      minimumAge: 18,
+      excludedCountries: [
+        countries.IRAN,
+        countries.IRAQ,
+        countries.NORTH_KOREA,
+        countries.RUSSIA,
+        countries.SYRIAN_ARAB_REPUBLIC,
+        countries.VENEZUELA
+      ],
+      ofac: true,
+      name: true,
+      nationality: true,
+    }
+  );
 
   const handleSuccess = async () => {
     console.log("Verification successful");
@@ -170,28 +138,14 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
           )}
         </div>
       </div>
-      {showQR && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="p-6 border rounded-lg bg-white dark:bg-zinc-900 shadow-xl text-center max-w-sm w-full">
-            <p className="mb-4 text-sm text-muted-foreground">
-              Scan to Verify and Register the Task !!
-            </p>
-            <SelfQRcodeWrapper
-              selfApp={selfApp!}
-              onSuccess={handleSuccess}
-              darkMode={true}
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-4"
-              onClick={() => setShowQR(false)}
-            >
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
+      <SelfQRModal
+        isOpen={showQR}
+        onClose={() => setShowQR(false)}
+        selfApp={selfApp}
+        onSuccess={handleSuccess}
+        title="Register for Task"
+        description="Scan to verify and register for this task"
+      />
 
       <Tabs defaultValue="details">
         <TabsList className="mb-6">

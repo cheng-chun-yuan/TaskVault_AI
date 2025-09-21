@@ -3,13 +3,14 @@
 import { useRouter } from "next/navigation"
 import { useWriteContract, useAccount, useWaitForTransactionReceipt, usePublicClient } from "wagmi"
 import { useState, useEffect } from "react"
+import { useTokenApproval } from "@/hooks"
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { TaskFormProvider, useTaskForm } from "@/context/task-form"
-import { toast } from "@workspace/ui/hooks/use-toast" 
-import { TaskVaultCore, ERC20Mock } from "@/content/address"
-import { TaskVaultCoreAbi, ERC20MockAbi } from "@/content/abi"
-import { formatEther, parseEther } from "viem"
+import { useNotification, useUser } from "@/context" 
+import { ERC20Mock } from "@/content/address"
+import { TaskVaultCoreAbi } from "@/content/abi"
+import { parseEther } from "viem"
 import ProgressIndicator from "./progress-indicator"
 import TaskDetailsStep from "./details"
 import VerificationStep from "./verification"
@@ -20,6 +21,8 @@ import { hashEndpointWithScope, getPackedForbiddenCountries } from "@/lib/self-u
 function TaskFormContent() {
   const router = useRouter()
   const { currentStep, setCurrentStep, validateStep, formData, updateFormData } = useTaskForm()
+  const { error, success, taskCreated } = useNotification()
+  const { addActivity } = useUser()
 
   // Initialize token address
   useEffect(() => {
@@ -62,62 +65,27 @@ function TaskFormContent() {
         if (!response.ok) throw new Error("Failed to save task")
 
         const { task } = await response.json()
+        
+        // Add activity and show success notification
+        addActivity({
+          type: "task_created",
+          title: `Created task: ${formData.title}`,
+          description: `Task created with ${formData.amount} ETH prize`,
+          taskId: task.taskId,
+        })
+        
+        taskCreated(task.taskId, formData.title)
         router.push(`/task/${task.taskId}`)
       } catch (error) {
         console.error("Error saving task:", error)
-        toast({
-          title: "Error",
-          description: "Failed to save task. Please try again.",
-          variant: "destructive",
-        })
+        error("Error", "Failed to save task. Please try again.")
       }
     }
 
     saveTaskToDB()
   }, [address, formData, router])
 
-  const checkAndApproveToken = async () => {
-    if (!address || !formData.tokenAddress || !formData.amount) return false
-
-    try {
-      if (!publicClient) return false
-
-      // Check current allowance
-      const allowance = await publicClient.readContract({
-        address: formData.tokenAddress as `0x${string}`,
-        abi: ERC20MockAbi,
-        functionName: 'allowance',
-        args: [address, TaskVaultCore],
-      }) as bigint
-
-      console.log("Current allowance:", formatEther(allowance))
-      // If allowance is insufficient, request approval
-      if (!allowance || Number(formatEther(allowance)) < Number(formData.amount)) {
-        const approveTx = await writeContractAsync({
-          address: formData.tokenAddress as `0x${string}`,
-          abi: ERC20MockAbi,
-          functionName: 'approve',
-          args: [TaskVaultCore, parseEther(formData.amount)],
-        })
-
-        // Wait for approval transaction
-        const approveReceipt = await publicClient.waitForTransactionReceipt({ hash: approveTx })
-        if (!approveReceipt.status) {
-          throw new Error('Token approval failed')
-        }
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error approving token:', error)
-      toast({
-        title: "Error",
-        description: "Failed to approve token. Please try again.",
-        variant: "destructive",
-      })
-      return false
-    }
-  }
+  const { checkAndApproveToken } = useTokenApproval()
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
@@ -132,17 +100,13 @@ function TaskFormContent() {
   const handleSubmit = async () => {
     if (!validateStep(currentStep)) return
     if (!address || !formData.deadline) {
-      toast({
-        title: "Error",
-        description: "Please connect wallet and set deadline",
-        variant: "destructive",
-      })
+      error("Error", "Please connect wallet and set deadline")
       return
     }
 
     try {
       // First approve tokens if needed
-      const isApproved = await checkAndApproveToken()
+      const isApproved = await checkAndApproveToken(address, formData.tokenAddress, formData.amount)
       const scopeName = 'trustjudge-ai';
       const taskCounter = await publicClient?.readContract({
         address: TaskVaultCore,
@@ -191,13 +155,10 @@ function TaskFormContent() {
       })
 
       setTxHash(txHash)
+      success("Transaction Submitted", "Task creation transaction has been submitted to the blockchain")
     } catch (err) {
       console.error("Error creating task:", err)
-      toast({
-        title: "Error",
-        description: "Failed to create task. Please try again.",
-        variant: "destructive",
-      })
+      error("Error", "Failed to create task. Please try again.")
     }
   }
 
