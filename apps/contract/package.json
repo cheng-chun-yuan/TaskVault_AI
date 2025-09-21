@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": "",
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "bun@1.1.0",
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.15.0",
     "@nomicfoundation/hardhat-ignition-viem": "^0.15.0",
