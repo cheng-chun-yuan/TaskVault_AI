@@ -40,6 +40,11 @@ model Task {
   creator        User         @relation("CreatedBy", fields: [createdBy], references: [walletAddress])
   createdBy      String
   submissions    Submission[]
+
+  @@index([taskType])
+  @@index([createdBy])
+  @@index([deadline])
+  @@index([createdAt])
 }
 
 model Submission {
@@ -51,4 +56,9 @@ model Submission {
   contentHash     String
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
+
+  @@index([taskId])
+  @@index([userId])
+  @@index([createdAt])
+  @@unique([taskId, userId])
 }
