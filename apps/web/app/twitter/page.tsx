@@ -1,19 +1,15 @@
 "use client";
 
-import { useWallets } from "@privy-io/react-auth";
 import { TwitterVerificationHeader } from "@/components/twitter/TwitterVerificationHeader";
 import { TwitterProgressCard } from "@/components/twitter/TwitterProgressCard";
 import { TwitterInstructionsCard } from "@/components/twitter/TwitterInstructionsCard";
 import { TwitterUploadCard } from "@/components/twitter/TwitterUploadCard";
 import { TwitterProofDisplay } from "@/components/twitter/TwitterProofDisplay";
-import { useFileUpload } from "@/hooks/useFileUpload";
-import { useProofGeneration } from "@/hooks/useProofGeneration";
+import { useFileUpload, useProofGeneration, useWalletAddress } from "@/hooks";
 
 export default function Home() {
-  const { wallets } = useWallets();
-  const address = wallets[0]?.address;
-
   // Custom hooks for cleaner state management
+  const address = useWalletAddress();
   const { fileContent, handleFileUpload } = useFileUpload();
   const { 
     proof, 
@@ -21,7 +17,7 @@ export default function Home() {
     verificationStatus, 
     txHash, 
     generateProof 
-  } = useProofGeneration({ address, fileContent });
+  } = useProofGeneration({ fileContent });
 
   return (
     <div className="container mx-auto py-6 px-4 sm:py-8 sm:px-6 max-w-4xl">

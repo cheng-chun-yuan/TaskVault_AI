@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
 import { TaskCard } from "@/components/common"
-import { useTasks } from "@/hooks/useTasks"
+import { useTasks } from "@/hooks"
 
 export default function TasksPage() {
   const { data: filteredTasks = [], isLoading } = useTasks()
@@ -34,8 +34,8 @@ export default function TasksPage() {
               id={task.id}
               title={task.title}
               description={task.description}
-              deadline={typeof task.deadline === 'string' ? task.deadline : task.deadline.toLocaleDateString()}
-              prize={task.prize}
+              deadline={task.deadline.toLocaleDateString()}
+              prize={`${task.prize} ETH`}
               status={task.status}
               submissions={task.submissions}
               creator={task.creator}

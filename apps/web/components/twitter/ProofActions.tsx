@@ -1,7 +1,7 @@
 import { Button } from "@workspace/ui/components/button";
 import { Copy, ExternalLink } from "lucide-react";
 import { Proof } from "@zk-email/sdk";
-import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import { useCopyToClipboard } from "@/hooks";
 
 interface ProofActionsProps {
   proof: Proof;

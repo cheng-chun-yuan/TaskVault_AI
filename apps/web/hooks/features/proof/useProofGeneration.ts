@@ -1,16 +1,18 @@
 import { useState } from "react";
 import zkeSdk, { Proof, ExternalInputInput } from "@zk-email/sdk";
+import { useWalletAddress } from "@/hooks/core/useWallet";
+import { useAsync } from "@/hooks/core/useAsync";
+import type { LoadingMode } from "@/types";
 
 const blueprintSlug = "wryonik/twitter@v3";
 
 interface UseProofGenerationProps {
-  address: string | undefined;
   fileContent: string;
 }
 
 interface UseProofGenerationReturn {
   proof: Proof | null;
-  isLoading: "client" | "server" | "verifying" | null;
+  isLoading: LoadingMode;
   verificationStatus: string;
   txHash: string;
   generateProof: (mode: "client" | "server") => Promise<void>;
@@ -18,14 +20,15 @@ interface UseProofGenerationReturn {
 }
 
 export function useProofGeneration({ 
-  address, 
   fileContent 
 }: UseProofGenerationProps): UseProofGenerationReturn {
   const [proof, setProof] = useState<Proof | null>(null);
-  const [isLoading, setIsLoading] = useState<"client" | "server" | "verifying" | null>(null);
+  const [isLoading, setIsLoading] = useState<LoadingMode>(null);
   const [verificationStatus, setVerificationStatus] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
 
+  const address = useWalletAddress();
+  const { execute: executeAsync } = useAsync();
   const sdk = zkeSdk();
 
   const externalInputs: ExternalInputInput[] = [
