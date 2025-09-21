@@ -50,8 +50,8 @@ interface Task {
   amount?: string | number;
   styleCommit?: string;
   taskType?: string;
-  maxPerTime?: string;
-  maxPerDay?: string;
+  maxPerTime?: string | null;
+  maxPerDay?: string | null;
   createdAt?: Date;
   createdBy?: string;
   submissions?: Submission[] | number;
