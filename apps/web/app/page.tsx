@@ -1,14 +1,29 @@
 import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
 import { ArrowRight, Award, CheckCircle, ClipboardList } from "lucide-react"
-import RainingLettersSection from "@/components/landing/RainingLettersBackground"
-import LandingSection from "@/components/landing/RainingLettersSection"
+import { Suspense, lazy } from "react"
+
+// Lazy load heavy components for better performance
+const RainingLettersSection = lazy(() => import("@/components/landing/RainingLettersBackground"))
+const LandingSection = lazy(() => import("@/components/landing/RainingLettersSection"))
+
+// Loading fallbacks
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center h-96 bg-background animate-pulse">
+    <div className="text-center">
+      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+)
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <LandingSection/>
+      <Suspense fallback={<LoadingFallback />}>
+        <LandingSection/>
+      </Suspense>
 
       {/* Process Flow */}
       <section className="py-16 px-4 md:px-6 bg-muted/50">
@@ -51,9 +66,10 @@ export default function Home() {
       </section>
 
       {/* Live Tasks Preview */}
-      <RainingLettersSection>
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">Live Tasks</h2>
+      <Suspense fallback={<LoadingFallback />}>
+        <RainingLettersSection>
+          <div className="container mx-auto max-w-5xl">
+            <h2 className="text-3xl font-bold text-center mb-12 text-white">Live Tasks</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
@@ -106,7 +122,8 @@ export default function Home() {
           </div>
         </div>
 
-      </RainingLettersSection>
+        </RainingLettersSection>
+      </Suspense>
     </div>
   )
 }

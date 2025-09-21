@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
+    "build:analyze": "ANALYZE=true bun run build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -35,9 +36,13 @@
     "tailwind-merge": "^3.0.1",
     "viem": "^2.25.0",
     "wagmi": "^2.14.16",
-    "zkverifyjs": "^0.19.0"
+    "web-vitals": "^5.1.0",
+    "zkverifyjs": "^0.19.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.5.3",
+    "@tanstack/react-query-devtools": "^5.89.0",
     "@types/node": "^20.17.19",
     "@types/react": "^19",
     "@types/react-dom": "^19",

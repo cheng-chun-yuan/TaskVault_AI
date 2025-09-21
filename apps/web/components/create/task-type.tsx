@@ -20,10 +20,10 @@ const taskTypes: { value: TaskType; label: string; description: string; disabled
     description: "Tasks requiring content creation and delivery"
   },
   {
-    value: "OMI_AI_DEVICE",
-    label: "OMI AI Device",
-    description: "Tasks involving interaction with OMI AI devices",
-    disabled: true
+    value: "TELEGRAM_GROUP",
+    label: "Telegram Group Activity",
+    description: "Tasks involving Telegram group engagement and activities",
+    disabled: false
   }
 ]
 

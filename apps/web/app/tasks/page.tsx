@@ -3,15 +3,10 @@
 import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
 import { TaskCard } from "@/components/common"
-import { useTask } from "@/context"
-import { useEffect } from "react"
+import { useTasks } from "@/hooks/useTasks"
 
 export default function TasksPage() {
-  const { filteredTasks, isLoading, loadTasks } = useTask()
-  
-  useEffect(() => {
-    loadTasks()
-  }, [])
+  const { data: filteredTasks = [], isLoading } = useTasks()
   
 
   return (

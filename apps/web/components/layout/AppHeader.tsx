@@ -6,15 +6,25 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useSetActiveWallet } from "@privy-io/wagmi";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "@workspace/ui/components/button";
-import { useUser, useNotification } from "@/context";
+import { useProfile, useDisplayName } from "@/stores/userStore";
+import { useNotification } from "@/context";
 import { Badge } from "@workspace/ui/components/badge";
-import { Bell } from "lucide-react";
+import { Bell, User, Wallet, Trophy, Calendar, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu";
 
 export default function AppHeader() {
   const { ready, authenticated, login, logout } = usePrivy();
   const { wallets } = useWallets();
   const { setActiveWallet } = useSetActiveWallet();
-  const { profile, getDisplayName } = useUser();
+  const profile = useProfile();
+  const displayName = useDisplayName();
   const { unreadCount } = useNotification();
 
   return (
@@ -44,7 +54,7 @@ export default function AppHeader() {
           {ready && !authenticated && (
             <>
               <Button variant="outline" onClick={login}>
-                Login with Privy
+                Login
               </Button>
             </>
           )}
@@ -64,32 +74,71 @@ export default function AppHeader() {
                 )}
               </Button>
               
-              {/* User Profile */}
+              {/* User Profile Dropdown */}
               {profile && (
-                <div className="hidden md:flex items-center gap-2">
-                  <div className="text-right">
-                    <div className="text-sm font-medium">{getDisplayName()}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Rep: {profile.reputation} • Tasks: {profile.tasksCreated}
-                    </div>
-                  </div>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="relative">
+                      <User className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{displayName}</p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {profile.address?.slice(0, 6)}...{profile.address?.slice(-4)}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    
+                    <DropdownMenuItem disabled>
+                      <Trophy className="mr-2 h-4 w-4" />
+                      <span>Reputation: {profile.reputation}</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem disabled>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      <span>Tasks Created: {profile.tasksCreated}</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem disabled>
+                      <Trophy className="mr-2 h-4 w-4" />
+                      <span>Tasks Completed: {profile.tasksCompleted}</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem disabled>
+                      <Wallet className="mr-2 h-4 w-4" />
+                      <span>Total Earned: {profile.totalEarned} ETH</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Wallet Selection */}
+                    {wallets.length > 0 && (
+                      <>
+                        <DropdownMenuLabel>Connected Wallets</DropdownMenuLabel>
+                        {wallets.map((wallet) => (
+                          <DropdownMenuItem
+                            key={wallet.address}
+                            onClick={() => setActiveWallet(wallet)}
+                          >
+                            <Wallet className="mr-2 h-4 w-4" />
+                            <span>{shorten(wallet.address)}</span>
+                          </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    
+                    <DropdownMenuItem onClick={logout} className="text-red-600">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
-              
-              <Button variant="destructive" onClick={logout}>
-                Logout
-              </Button>
-              <div className="hidden lg:flex gap-2">
-                {wallets.map((wallet) => (
-                  <Button
-                    key={wallet.address}
-                    variant="ghost"
-                    onClick={() => setActiveWallet(wallet)}
-                  >
-                    {shorten(wallet.address)}
-                  </Button>
-                ))}
-              </div>
             </>
           )}
 

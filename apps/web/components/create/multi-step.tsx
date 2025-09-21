@@ -59,6 +59,10 @@ function TaskFormContent() {
             amount: formData.amount,
             styleCommit: formData.styleCommit,
             creatorAddress: address,
+            taskType: formData.taskType,
+            telegramChatId: formData.telegramChatId,
+            submissionTag: formData.submissionTag,
+            rewardTiming: formData.rewardTiming,
           }),
         })
 

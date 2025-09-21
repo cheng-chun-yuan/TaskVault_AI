@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from "react"
 import { useAccount, usePublicClient } from "wagmi"
 
 interface Task {
@@ -15,7 +15,10 @@ interface Task {
   submissions: number
   creator: string
   createdAt: Date
-  taskType: "TWITTER_INTERACT" | "CONTENT_DELIVERY" | "OMI_DEVICE"
+  taskType: "TWITTER_INTERACT" | "CONTENT_DELIVERY" | "TELEGRAM_GROUP"
+  
+  // Telegram specific
+  telegramChatId?: string
   
   // Verification requirements
   minimumAge?: number
@@ -147,7 +150,8 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         submissions: task.submissions,
         creator: task.creator,
         createdAt: new Date(task.createdAt),
-        taskType: task.taskType as "TWITTER_INTERACT" | "CONTENT_DELIVERY" | "OMI_DEVICE",
+        taskType: task.taskType as "TWITTER_INTERACT" | "CONTENT_DELIVERY" | "TELEGRAM_GROUP",
+        telegramChatId: task.telegramChatId,
         excludedCountries: task.excludedCountries || [],
         ofacRequired: task.ofacRequired || false,
         onChainId: task.onChainId,
@@ -200,7 +204,8 @@ export function TaskProvider({ children }: { children: ReactNode }) {
           submissions: 0, // Would need to fetch from submissions API
           creator: taskData.createdBy,
           createdAt: new Date(taskData.createdAt),
-          taskType: taskData.taskType as "TWITTER_INTERACT" | "CONTENT_DELIVERY" | "OMI_DEVICE",
+          taskType: taskData.taskType as "TWITTER_INTERACT" | "CONTENT_DELIVERY" | "TELEGRAM_GROUP",
+          telegramChatId: taskData.telegramChatId,
           excludedCountries: [],
           ofacRequired: false,
         }
@@ -223,7 +228,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...tasks]
 
     // Status filter
@@ -271,7 +276,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
 
     setFilteredTasks(filtered)
-  }
+  }, [tasks, filter])
 
   const setFilter = (newFilter: Partial<TaskFilter>) => {
     setFilterState(prev => ({ ...prev, ...newFilter }))
@@ -296,12 +301,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     setFilteredTasks(searchResults)
   }
 
-  const getMyTasks = (): Task[] => {
-    if (!address) return []
-    return tasks.filter(task => task.creator.toLowerCase() === address.toLowerCase())
-  }
-
-  const getMySubmissions = (): Task[] => {
+  const getMySubmissions = useCallback((): Task[] => {
     if (!address) return []
     
     // Filter tasks where current user has made submissions
@@ -311,9 +311,9 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       // For now, return empty array - this should be implemented with proper submission tracking
       return false
     })
-  }
+  }, [address, tasks])
 
-  const submitToTask = async (taskId: string, submission: any): Promise<boolean> => {
+  const submitToTask = useCallback(async (taskId: string, submission: any): Promise<boolean> => {
     try {
       if (!address) {
         throw new Error("Wallet not connected")
@@ -355,9 +355,9 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       console.error("Error submitting to task:", error)
       return false
     }
-  }
+  }, [address, loadTasks])
 
-  const registerForTask = async (taskId: string): Promise<boolean> => {
+  const registerForTask = useCallback(async (taskId: string): Promise<boolean> => {
     try {
       // Registration logic would depend on your business requirements
       // For now, just validate that task exists and user is eligible
@@ -381,27 +381,32 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       console.error("Error registering for task:", error)
       return false
     }
-  }
+  }, [address, loadTask])
 
-  const getTasksByStatus = (status: Task["status"]): Task[] => {
+  const getMyTasks = useCallback((): Task[] => {
+    if (!address) return []
+    return tasks.filter(task => task.creator.toLowerCase() === address.toLowerCase())
+  }, [address, tasks])
+
+  const getTasksByStatus = useCallback((status: Task["status"]): Task[] => {
     return tasks.filter(task => task.status === status)
-  }
+  }, [tasks])
 
-  const getTotalPrizePool = (): string => {
+  const getTotalPrizePool = useCallback((): string => {
     const total = tasks.reduce((sum, task) => sum + parseFloat(task.prize), 0)
     return total.toFixed(2)
-  }
+  }, [tasks])
 
-  const getTaskStats = () => {
+  const getTaskStats = useCallback(() => {
     return {
       total: tasks.length,
-      open: getTasksByStatus("Open").length,
-      judging: getTasksByStatus("Judging").length,
-      closed: getTasksByStatus("Closed").length,
+      open: tasks.filter(task => task.status === "Open").length,
+      judging: tasks.filter(task => task.status === "Judging").length,
+      closed: tasks.filter(task => task.status === "Closed").length,
     }
-  }
+  }, [tasks])
 
-  const value: TaskContextType = {
+  const value: TaskContextType = useMemo(() => ({
     tasks,
     filteredTasks,
     currentTask,
@@ -420,7 +425,17 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     getTasksByStatus,
     getTotalPrizePool,
     getTaskStats,
-  }
+  }), [
+    tasks,
+    filteredTasks,
+    currentTask,
+    isLoading,
+    filter,
+    getMyTasks,
+    getTasksByStatus,
+    getTotalPrizePool,
+    getTaskStats
+  ])
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>
 }

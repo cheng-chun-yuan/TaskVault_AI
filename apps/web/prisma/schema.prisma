@@ -13,16 +13,36 @@ generator client {
 enum TaskType {
   TWITTER_INTERACT
   CONTENT_DELIVERY
-  OMI_AI_DEVICE
+  TELEGRAM_GROUP
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REWARDED
+}
+
+enum RewardTiming {
+  INSTANT
+  POST_EVENT
 }
 
 model User {
   id              String       @id @default(uuid())
   walletAddress   String       @unique
+  role            UserRole     @default(USER)
+  telegramHandle  String?      // Optional Telegram handle for submission tracking
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   submissions     Submission[]
   createdTasks    Task[]       @relation("CreatedBy")
+  participations  TaskParticipation[]
 }
 
 model Task {
@@ -34,31 +54,60 @@ model Task {
   tokenAddress   String
   amount         String
   styleCommit    String
-  taskType       TaskType     @default(TWITTER_INTERACT)
+  taskType       TaskType     @default(TELEGRAM_GROUP)
+  telegramChatId String?      // Optional Telegram chat ID for TELEGRAM_GROUP tasks
+  submissionTag  String?      // Specific tag users must include in Telegram submissions
+  rewardTiming   RewardTiming @default(INSTANT)
+  isActive       Boolean      @default(true)
+  maxParticipants Int?        // Optional limit on participants
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   creator        User         @relation("CreatedBy", fields: [createdBy], references: [walletAddress])
   createdBy      String
   submissions    Submission[]
+  participations TaskParticipation[]
 
   @@index([taskType])
   @@index([createdBy])
   @@index([deadline])
   @@index([createdAt])
+  @@index([telegramChatId])
+  @@index([isActive])
+  @@index([submissionTag])
 }
 
 model Submission {
+  id              String           @id @default(uuid())
+  taskId          String
+  task            Task             @relation(fields: [taskId], references: [taskId])
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  contentHash     String           // Telegram message hash or content reference
+  telegramContent String?          // Actual Telegram message content
+  status          SubmissionStatus @default(PENDING)
+  aiJudgeScore    Float?           // AI-generated score (0-100)
+  aiJudgeReason   String?          // AI explanation for the score
+  rewardTxHash    String?          // Transaction hash for reward distribution
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([taskId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+  @@unique([taskId, userId])
+}
+
+// New table for simple task participation tracking
+model TaskParticipation {
   id              String       @id @default(uuid())
   taskId          String
   task            Task         @relation(fields: [taskId], references: [taskId])
   userId          String
   user            User         @relation(fields: [userId], references: [id])
-  contentHash     String
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  joinedAt        DateTime     @default(now())
 
   @@index([taskId])
   @@index([userId])
-  @@index([createdAt])
   @@unique([taskId, userId])
 }

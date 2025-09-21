@@ -21,13 +21,17 @@ export type TaskData = {
   title: string
   description: string
   criteria: string[]
-  judgeStyle: string
-  salt: string
+  judgeStyle?: string
+  salt?: string
   deadline: Date
   tokenAddress: Address
   amount: string
   styleCommit?: Hash
   createdBy: Address
+  taskType?: string
+  telegramChatId?: string
+  submissionTag?: string
+  rewardTiming?: string
 }
 
 export const shorten = (address: string | undefined) => {

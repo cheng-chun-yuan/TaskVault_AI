@@ -3,7 +3,7 @@ export interface Judge {
   style: string
 }
 
-export type TaskType = 'TWITTER_INTERACT' | 'CONTENT_DELIVERY' | 'OMI_AI_DEVICE'
+export type TaskType = 'TWITTER_INTERACT' | 'CONTENT_DELIVERY' | 'TELEGRAM_GROUP'
 
 export interface TaskFormData {
   title: string
@@ -21,6 +21,9 @@ export interface TaskFormData {
   maxPerDay: string
   createdBy: string
   taskType: TaskType
+  telegramChatId?: string
+  submissionTag?: string
+  rewardTiming?: 'INSTANT' | 'POST_EVENT'
 }
 
 export interface FormErrors {
@@ -36,5 +39,8 @@ export interface FormErrors {
   maxPerTime?: string
   maxPerDay?: string
   taskType?: string
+  telegramChatId?: string
+  submissionTag?: string
+  rewardTiming?: string
   [key: `judge${number}`]: string | undefined
 }

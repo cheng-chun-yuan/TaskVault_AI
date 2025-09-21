@@ -3,6 +3,8 @@ import { Mona_Sans as FontSans, Fira_Mono as FontMono } from "next/font/google"
 import { cn } from "@/lib/utils"
 import { Providers } from "@/components/layout/providers"
 import Web3Provider from "@/components/layout/Web3Provider"
+import { QueryProvider } from "@/components/layout/QueryProvider"
+import { StoreProvider } from "@/components/layout/StoreProvider"
 import AppHeader from "@/components/layout/AppHeader"
 import AppFooter from "@/components/layout/AppFooter"
 import "@workspace/ui/styles/globals.css"
@@ -28,13 +30,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable, fontMono.variable)}>
         <Web3Provider>
-          <Providers>
-            <div className="flex flex-col min-h-screen">
-              <AppHeader />
-              <main className="flex-1">{children}</main>
-              <AppFooter />
-            </div>
-          </Providers>
+          <QueryProvider>
+            <Providers>
+              <StoreProvider>
+                <div className="flex flex-col min-h-screen">
+                  <AppHeader />
+                  <main className="flex-1">{children}</main>
+                  <AppFooter />
+                </div>
+              </StoreProvider>
+            </Providers>
+          </QueryProvider>
         </Web3Provider>
       </body>
     </html>

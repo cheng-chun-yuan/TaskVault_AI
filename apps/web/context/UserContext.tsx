@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from "react"
 import { useAccount } from "wagmi"
 
 interface UserProfile {
@@ -129,7 +129,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             reputation: 0,
             emailNotifications: true,
             browserNotifications: true,
-            defaultTaskType: "TWITTER_INTERACT",
+            defaultTaskType: "TELEGRAM_GROUP",
           }
           setProfile(newProfile)
           localStorage.setItem(`profile_${userAddress}`, JSON.stringify(newProfile))
@@ -152,7 +152,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         reputation: 0,
         emailNotifications: true,
         browserNotifications: true,
-        defaultTaskType: "TWITTER_INTERACT",
+        defaultTaskType: "TELEGRAM_GROUP",
       }
       setProfile(fallbackProfile)
     } finally {
@@ -160,7 +160,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const updateProfile = async (updates: Partial<UserProfile>): Promise<boolean> => {
+  const updateProfile = useCallback(async (updates: Partial<UserProfile>): Promise<boolean> => {
     if (!profile || !address) return false
 
     try {
@@ -183,15 +183,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
       console.error("Error updating profile:", error)
       return false
     }
-  }
+  }, [profile, address])
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (address) {
       await loadUserProfile(address)
     }
-  }
+  }, [address])
 
-  const addActivity = (activity: Omit<UserActivity, "id" | "timestamp">) => {
+  const addActivity = useCallback((activity: Omit<UserActivity, "id" | "timestamp">) => {
     const newActivity: UserActivity = {
       ...activity,
       id: Date.now().toString(),
@@ -205,7 +205,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const cachedActivities = [newActivity, ...activities].slice(0, 50)
       localStorage.setItem(`activities_${address}`, JSON.stringify(cachedActivities))
     }
-  }
+  }, [activities, address])
 
   const loadActivities = async () => {
     if (!address) return
@@ -280,19 +280,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const getDisplayName = (): string => {
+  const getDisplayName = useCallback((): string => {
     if (!profile) return "Anonymous"
     return profile.displayName || `${profile.address.slice(0, 6)}...${profile.address.slice(-4)}`
-  }
+  }, [profile])
 
-  const formatReputation = (): string => {
+  const formatReputation = useCallback((): string => {
     if (!profile) return "0"
     const rep = profile.reputation
     if (rep >= 1000) return `${(rep / 1000).toFixed(1)}k`
     return rep.toString()
-  }
+  }, [profile])
 
-  const value: UserContextType = {
+  const value: UserContextType = useMemo(() => ({
     profile,
     isProfileLoading,
     activities,
@@ -305,7 +305,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
     checkVerificationStatus,
     getDisplayName,
     formatReputation,
-  }
+  }), [
+    profile,
+    isProfileLoading,
+    activities,
+    isActivitiesLoading,
+    updateProfile,
+    refreshProfile,
+    addActivity,
+    getDisplayName,
+    formatReputation
+  ])
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

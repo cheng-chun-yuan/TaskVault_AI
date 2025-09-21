@@ -8,8 +8,18 @@ export async function POST(req: Request) {
     
     const task = await prisma.task.create({
       data: {
-        ...data,
+        title: data.title,
+        description: data.description,
+        criteria: data.criteria,
+        deadline: data.deadline,
+        tokenAddress: data.tokenAddress,
+        amount: data.amount,
         styleCommit: data.styleCommit!,
+        createdBy: data.createdBy,
+        taskType: data.taskType || 'TELEGRAM_GROUP',
+        telegramChatId: data.telegramChatId,
+        submissionTag: data.submissionTag,
+        rewardTiming: data.rewardTiming || 'INSTANT',
       },
     })
 
@@ -113,6 +123,7 @@ export async function GET(request: Request) {
         creator: task.creator.walletAddress,
         createdAt: task.createdAt,
         taskType: task.taskType,
+        telegramChatId: task.telegramChatId,
         excludedCountries: [], // Add to schema if needed
         ofacRequired: true, // Add to schema if needed
       }

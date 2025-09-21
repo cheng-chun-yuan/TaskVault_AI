@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, memo } from "react"
 
 interface Character {
   char: string
@@ -107,4 +107,4 @@ const RainingLettersBackground = ({ children }: { children: React.ReactNode }) =
   )
 }
 
-export default RainingLettersBackground
+export default memo(RainingLettersBackground)

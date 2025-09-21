@@ -62,6 +62,66 @@ export default function TaskDetailsStep() {
 
       <TaskTypeSelector />
 
+      {formData.taskType === "TELEGRAM_GROUP" && (
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <Label htmlFor="telegramChatId">Telegram Chat ID</Label>
+            <Input
+              id="telegramChatId"
+              value={formData.telegramChatId || ""}
+              onChange={(e) => updateFormData("telegramChatId", e.target.value)}
+              placeholder="Enter Telegram chat ID (e.g., -100123456789)"
+              className={errors.telegramChatId ? "border-destructive" : ""}
+            />
+            <p className="text-sm text-muted-foreground">
+              Telegram chat ID to track group activity. You can find it by adding @RawDataBot to your group.
+            </p>
+            {errors.telegramChatId && (
+              <div className="flex items-center gap-x-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <p>{errors.telegramChatId}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <Label htmlFor="submissionTag">Submission Tag</Label>
+            <Input
+              id="submissionTag"
+              value={formData.submissionTag || ""}
+              onChange={(e) => updateFormData("submissionTag", e.target.value)}
+              placeholder="Enter tag for submissions (e.g., #TaskVaultSubmit)"
+              className={errors.submissionTag ? "border-destructive" : ""}
+            />
+            <p className="text-sm text-muted-foreground">
+              Users must include this tag in their Telegram messages to submit. AI will automatically detect and judge submissions.
+            </p>
+            {errors.submissionTag && (
+              <div className="flex items-center gap-x-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <p>{errors.submissionTag}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <Label htmlFor="rewardTiming">Reward Timing</Label>
+            <select
+              id="rewardTiming"
+              value={formData.rewardTiming || "INSTANT"}
+              onChange={(e) => updateFormData("rewardTiming", e.target.value)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="INSTANT">Instant Reward (immediately after AI approval)</option>
+              <option value="POST_EVENT">Post-Event Reward (after task deadline)</option>
+            </select>
+            <p className="text-sm text-muted-foreground">
+              Choose when participants receive rewards after successful submission.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-4">
         <Label>Criteria</Label>
         <div className="space-y-4">
