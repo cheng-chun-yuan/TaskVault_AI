@@ -1,13 +1,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
-import { Button } from "@workspace/ui/components/button";
-import { Alert, AlertDescription } from "@workspace/ui/components/alert";
-import { Upload, Zap, Shield, AlertCircle, CheckCircle } from "lucide-react";
+import { Zap } from "lucide-react";
+import { Proof } from "@zk-email/sdk";
+import { FileUploadArea } from "./FileUploadArea";
+import { ProofGenerationOptions } from "./ProofGenerationOptions";
+import { StatusDisplay } from "./StatusDisplay";
+import { ProofActions } from "./ProofActions";
 
 interface TwitterUploadCardProps {
   address: string | undefined;
   fileContent: string;
   isLoading: "client" | "server" | "verifying" | null;
   verificationStatus: string;
+  proof: Proof | null;
+  txHash: string;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onGenerateProof: (mode: "client" | "server") => void;
 }
@@ -17,89 +22,60 @@ export function TwitterUploadCard({
   fileContent, 
   isLoading, 
   verificationStatus,
+  proof,
+  txHash,
   onFileUpload, 
   onGenerateProof 
 }: TwitterUploadCardProps) {
   return (
-    <Card>
+    <Card className="flex flex-col h-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5 text-green-600" />
-          Verify Your Twitter
+        <CardTitle className="flex items-center gap-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Zap className="h-5 w-5 text-blue-600" />
+          </div>
+          Generate Proof
         </CardTitle>
-        <CardDescription>
-          {address ? `Connected: ${address.slice(0, 6)}...${address.slice(-4)}` : "Connect your wallet first"}
+        <CardDescription className="text-sm text-muted-foreground">
+          Upload your Twitter email and choose how to generate your zero-knowledge proof
+          <div className="mt-2">
+            {address ? (
+              <span className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                Connected: {address.slice(0, 6)}...{address.slice(-4)}
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                Connect your wallet first
+              </span>
+            )}
+          </div>
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* File Upload */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Upload Twitter Email</label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-            <input
-              type="file"
-              onChange={onFileUpload}
-              className="hidden"
-              id="email-upload"
-              accept=".eml,.txt"
-            />
-            <label htmlFor="email-upload" className="cursor-pointer">
-              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm font-medium">
-                {fileContent ? "✅ Email loaded" : "Click to upload email file"}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Supports .eml and .txt files
-              </p>
-            </label>
-          </div>
-        </div>
+      <CardContent className="space-y-4 flex-1">
+        <FileUploadArea 
+          fileContent={fileContent} 
+          onFileUpload={onFileUpload} 
+        />
+        
+        <ProofGenerationOptions
+          fileContent={fileContent}
+          address={address}
+          isLoading={isLoading}
+          onGenerateProof={onGenerateProof}
+        />
 
-        {/* Action Buttons */}
-        <div className="space-y-3">
-          <Button
-            onClick={() => onGenerateProof("client")}
-            disabled={!fileContent || !address || isLoading !== null}
-            className="w-full"
-            variant="default"
-          >
-            <Zap className="h-4 w-4 mr-2" />
-            {isLoading === "client" ? "Generating in Browser..." : "Generate Proof (Browser)"}
-          </Button>
-          
-          <Button
-            onClick={() => onGenerateProof("server")}
-            disabled={!fileContent || !address || isLoading !== null}
-            className="w-full"
-            variant="secondary"
-          >
-            <Shield className="h-4 w-4 mr-2" />
-            {isLoading === "server" ? "Generating on Server..." : "Generate Proof (Server)"}
-          </Button>
-        </div>
+        <StatusDisplay 
+          isLoading={isLoading} 
+          verificationStatus={verificationStatus} 
+        />
 
-        {/* Loading State */}
-        {isLoading && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {isLoading === "verifying" 
-                ? "Verifying proof on zkVerify network..." 
-                : "Generating zero-knowledge proof... This may take several minutes."
-              }
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Verification Status */}
-        {verificationStatus && (
-          <Alert className={verificationStatus.includes("✅") ? "border-green-200 bg-green-50" : 
-                          verificationStatus.includes("❌") ? "border-red-200 bg-red-50" : ""}>
-            <CheckCircle className="h-4 w-4" />
-            <AlertDescription>
-              <strong>zkVerify Status:</strong> {verificationStatus}
-            </AlertDescription>
-          </Alert>
+        {proof && (
+          <ProofActions 
+            proof={proof} 
+            txHash={txHash} 
+          />
         )}
       </CardContent>
     </Card>

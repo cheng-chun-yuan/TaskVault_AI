@@ -42,12 +42,8 @@ export function TwitterProofDisplay({ proof }: TwitterProofDisplayProps) {
           </pre>
         </div>
         <div className="flex items-center gap-2 mt-4">
-          <Button variant="outline" size="sm">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            View on zkVerify Explorer
-          </Button>
           <Button variant="outline" size="sm" onClick={handleCopyProof}>
-            Copy Proof Data
+            Copy Data
           </Button>
         </div>
       </CardContent>

@@ -4,26 +4,12 @@ import { zkVerify } from '@/lib/env'
 
 export async function POST(request: Request) {
   console.log('=== zkVerify Submit API Called ===')
-  console.log('Request URL:', request.url)
-  console.log('Request method:', request.method)
   
   try {
-    console.log('Parsing request body...')
     const requestBody = await request.json()
-    console.log('Raw request body type:', typeof requestBody)
-    console.log('Raw request body keys:', Object.keys(requestBody || {}))
     
     const { vkey, proof, publicSignals } = requestBody
     
-    console.log('Request body parsed successfully')
-    console.log('vkey present:', !!vkey)
-    console.log('proof present:', !!proof)
-    console.log('publicSignals present:', !!publicSignals)
-    
-    if (vkey) console.log('vkey length:', JSON.stringify(vkey).length)
-    if (proof) console.log('proof keys:', Object.keys(proof))
-    if (publicSignals) console.log('publicSignals length:', publicSignals.length)
-
     // Validate required fields
     if (!vkey || !proof || !publicSignals) {
       console.log('❌ Missing required fields')
@@ -59,9 +45,6 @@ export async function POST(request: Request) {
     try {
       // Submit proof for verification
       console.log('Submitting proof for verification...')
-      console.log('vkey type:', typeof vkey)
-      console.log('vkey content (first 100 chars):', JSON.stringify(vkey).substring(0, 100) + '...')
-      console.log('vkey full length:', JSON.stringify(vkey).length)
       
       const { events } = await session.verify()
         .groth16({ 
@@ -70,7 +53,7 @@ export async function POST(request: Request) {
         })
         .execute({
           proofData: {
-            vk: vkey,
+            vk: JSON.parse(vkey),
             proof: proof,
             publicSignals: publicSignals
           }
