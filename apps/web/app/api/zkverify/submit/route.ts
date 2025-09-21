@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { zkVerifySession, Library, CurveType, ZkVerifyEvents } from 'zkverifyjs'
+import { zkVerify } from '@/lib/env'
 
 export async function POST(request: Request) {
   console.log('=== zkVerify Submit API Called ===')
@@ -32,9 +33,9 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get seed phrase from server environment (secure)
+    // Get seed phrase from centralized config (secure)
     console.log('Checking environment variables...')
-    const seedPhrase = process.env.ZKVERIFY_SEED_PHRASE
+    const seedPhrase = zkVerify.seedPhrase
     if (!seedPhrase) {
       console.error('❌ ZKVERIFY_SEED_PHRASE not configured in server environment')
       return NextResponse.json(

@@ -1,5 +1,6 @@
 import withBundleAnalyzer from '@next/bundle-analyzer'
 
+// Use environment variable directly in config since we can't import TS modules in JS config
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 })

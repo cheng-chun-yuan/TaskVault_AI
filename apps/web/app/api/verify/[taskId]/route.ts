@@ -5,6 +5,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { SubmissionRegistryAbi } from '@/content/abi';
 import { celoAlfajores } from 'viem/chains';
 import { SubmissionRegistry } from '@/content/address';
+import { blockchain } from '@/lib/env';
 
 export async function GET() {
   return Response.json({ message: 'Hello World: api verify' });
@@ -37,10 +38,10 @@ export async function POST(req: NextRequest) {
     const address = publicSignals[0];
     console.log(`Processing Self v2 verification for task ${taskId} from address ${address}`);
 
-    if (!process.env.PRIVATE_KEY) {
+    if (!blockchain.privateKey) {
       throw new Error('PRIVATE_KEY environment variable is not set');
     }
-    const account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY}`);
+    const account = privateKeyToAccount(`0x${blockchain.privateKey}`);
 
     const publicClient = createPublicClient({
       chain: celoAlfajores,
