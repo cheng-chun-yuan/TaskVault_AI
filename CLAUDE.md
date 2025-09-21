@@ -99,7 +99,7 @@ bun interact:celo
 - Uses viem/wagmi for web3 interactions
 - @zk-email/sdk for email verification with Twitter blueprint
 - zkVerify integration for decentralized proof verification on Volta network
-- @selfxyz libraries for additional verification features
+- @selfxyz libraries v2 for identity verification (ID documents, passports)
 - Multi-step task creation with progress tracking
 - Support for native ETH and ERC20 token prizes
 
@@ -118,22 +118,44 @@ Web app requires:
 
 ## zkVerify Integration
 
-The project integrates zkVerify for decentralized ZK proof verification:
+The project has zkVerifyJS integration available:
+- `zkverifyjs` package installed for future zkVerify integration
+- Twitter verification supports on-chain proof verification
+- Ready for zkVerify implementation when needed
+
+## Self Protocol V2 Integration
+
+The project uses Self Protocol V2 for identity verification:
 
 ### Key Features
-- Toggle between zkVerify and traditional on-chain verification
-- Real-time verification status updates
-- Support for Volta testnet and Mainnet
-- Comprehensive error handling and logging
+- Multi-document support (E-Passports, EU ID Cards)
+- Enhanced disclosure configuration with granular control
+- Improved backend verification with SelfBackendVerifier
+- Better error handling and validation
 
 ### Usage
 ```typescript
-import { createZkVerifyIntegration } from '@/lib/zkverify';
-const zkVerifyIntegration = createZkVerifyIntegration('Volta');
-await zkVerifyIntegration.verifyProof(proof, vkey, onStatusUpdate);
+// Frontend
+const app = new SelfAppBuilder({
+  appName: "TaskVault AI",
+  scope: "trustjudge-ai",
+  disclosures: {
+    minimumAge: 18,
+    excludedCountries: ['IRN', 'PRK'],
+    ofac: true,
+    name: true,
+    nationality: true,
+    date_of_birth: true,
+  }
+}).build();
+
+// Backend
+const verifier = new SelfBackendVerifier(scope, endpoint, false, [], null, "hex");
+const result = await verifier.verifyProof(proof, publicSignals);
 ```
 
 ### Files
-- `lib/zkverify.ts`: Core integration utilities
-- `app/twitter/page.tsx`: Twitter verification with zkVerify option
-- `README-ZKVERIFY.md`: Detailed setup and usage guide
+- `components/create/verification.tsx`: Task creation verification setup
+- `components/task/taskclient.tsx`: Task verification UI
+- `app/api/verify/[taskId]/route.ts`: Backend verification API
+- `README-SELF-V2-MIGRATION.md`: Migration guide from v1 to v2
