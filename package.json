@@ -13,6 +13,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@types/minimatch": "^6.0.0",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "prettier": "^3.5.1",

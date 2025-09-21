@@ -3,10 +3,10 @@ import prisma from '@/lib/prisma'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: taskId } = params
+    const { id: taskId } = await params
     const { walletAddress } = await request.json()
 
     if (!walletAddress) {

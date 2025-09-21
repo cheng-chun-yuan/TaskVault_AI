@@ -3,10 +3,10 @@ import prisma from '@/lib/prisma'
 
 export async function GET(
   request: Request,
-  { params }: { params: { address: string } }
+  { params }: { params: Promise<{ address: string }> }
 ) {
   try {
-    const { address } = params
+    const { address } = await params
     
     const user = await prisma.user.findUnique({
       where: { walletAddress: address },
@@ -90,10 +90,10 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { address: string } }
+  { params }: { params: Promise<{ address: string }> }
 ) {
   try {
-    const { address } = params
+    const { address } = await params
     const updates = await request.json()
     
     // For now, we'll just store preferences in a separate table or extend the user model

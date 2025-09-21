@@ -8,7 +8,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { TaskFormProvider, useTaskForm } from "@/context/task-form"
 import { useNotification, useUser } from "@/context" 
-import { ERC20Mock } from "@/content/address"
+import { ERC20Mock, TaskVaultCore } from "@/content/address"
 import { TaskVaultCoreAbi } from "@/content/abi"
 import { parseEther } from "viem"
 import ProgressIndicator from "./progress-indicator"
@@ -80,8 +80,8 @@ function TaskFormContent() {
         
         taskCreated(task.taskId, formData.title)
         router.push(`/task/${task.taskId}`)
-      } catch (error) {
-        console.error("Error saving task:", error)
+      } catch (err) {
+        console.error("Error saving task:", err)
         error("Error", "Failed to save task. Please try again.")
       }
     }

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import type { TaskData } from '@/lib/utils'
+import type { TaskType } from '@/types/task-form'
+import type { RewardTiming } from '@prisma/client'
 
 export async function POST(req: Request) {
   try {
@@ -16,10 +18,10 @@ export async function POST(req: Request) {
         amount: data.amount,
         styleCommit: data.styleCommit!,
         createdBy: data.createdBy,
-        taskType: data.taskType || 'TELEGRAM_GROUP',
+        taskType: (data.taskType || 'TELEGRAM_GROUP') as TaskType,
         telegramChatId: data.telegramChatId,
         submissionTag: data.submissionTag,
-        rewardTiming: data.rewardTiming || 'INSTANT',
+        rewardTiming: (data.rewardTiming || 'INSTANT') as RewardTiming,
       },
     })
 

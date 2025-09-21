@@ -6,6 +6,19 @@
 import { keccak256, encodePacked } from 'viem';
 
 /**
+ * Self v2 disclosure configuration interface
+ */
+export interface SelfDisclosures {
+  minimumAge: number;
+  excludedCountries: string[];
+  ofac: boolean;
+  name?: boolean;
+  nationality?: boolean;
+  date_of_birth?: boolean;
+  [key: string]: unknown;
+}
+
+/**
  * Hash endpoint with scope for Self verification
  * Replacement for hashEndpointWithScope from v1
  */
@@ -71,7 +84,7 @@ export function countryCodeToNumber(countryCode: string): number {
 /**
  * Validate Self v2 disclosure configuration
  */
-export function validateDisclosures(disclosures: any): boolean {
+export function validateDisclosures(disclosures: SelfDisclosures): boolean {
   const requiredFields = ['minimumAge', 'excludedCountries', 'ofac'];
   const v2Fields = ['name', 'nationality', 'date_of_birth'];
   

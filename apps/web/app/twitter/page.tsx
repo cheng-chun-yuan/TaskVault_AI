@@ -71,14 +71,11 @@ export default function Home() {
       
       setVerificationStatus("Submitting proof to zkVerify...");
       
-      // Get verification key from blueprint
-      const vkey = await blueprint.getVerifyingKey();
-      
       const { events } = await session.verify()
         .groth16({ library: Library.snarkjs, curve: CurveType.bn128 })
         .execute({
           proofData: {
-            vk: JSON.parse(vkey),
+            vk: await blueprint.getVkey(),
             proof: generatedProof.props.proofData,
             publicSignals: generatedProof.props.publicOutputs
           }
@@ -90,11 +87,7 @@ export default function Home() {
         session.close().then(r => console.log("zkVerify session closed"));
       });
 
-      events.on(ZkVerifyEvents.Error, (error) => {
-        console.error("zkVerify error:", error);
-        setVerificationStatus(`Verification failed: ${error.message}`);
-        session.close();
-      });
+      // TODO: Add proper error handling for zkVerify events
 
       setVerificationStatus("Waiting for block inclusion...");
       console.log("Proof submitted to zkVerify, waiting for inclusion...");
