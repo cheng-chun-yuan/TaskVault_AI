@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import SelfQRcodeWrapper, { SelfApp } from "@selfxyz/qrcode"
+import { SelfQRcodeWrapper } from "@selfxyz/qrcode"
+import type { SelfApp } from "@selfxyz/qrcode"
 import { 
   Dialog, 
   DialogContent, 
@@ -68,6 +69,8 @@ export function SelfQRModal({
             <SelfQRcodeWrapper
               selfApp={selfApp}
               onSuccess={handleSuccess}
+              onError={(error) => console.error("Verification error:", error)}
+              darkMode={false}
             />
           </div>
           

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import SelfQRcodeWrapper from "@selfxyz/qrcode"
+import { SelfQRcodeWrapper } from "@selfxyz/qrcode"
 import { useAccount } from "wagmi"
 
 import { Button } from "@workspace/ui/components/button"
@@ -92,6 +92,7 @@ export default function VerificationStep() {
               <SelfQRcodeWrapper
                 selfApp={selfApp}
                 onSuccess={() => console.log("Verification successful")}
+                onError={(error) => console.error("Verification error:", error)}
                 darkMode={false}
               />
               <p className="text-sm text-muted-foreground">User ID: {address?.substring(0, 8)}...</p>

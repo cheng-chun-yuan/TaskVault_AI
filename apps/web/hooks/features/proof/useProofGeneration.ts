@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { default as zkeSdk, Proof, ExternalInputInput } from "@zk-email/sdk";
+import { initZkEmailSdk, Proof } from "@zk-email/sdk";
+import type { ExternalInputInput } from "@zk-email/sdk";
 import { useWalletAddress } from "@/hooks/core/useWallet";
 import { useAsync } from "@/hooks/core/useAsync";
 import type { LoadingMode } from "@/types";
@@ -26,7 +27,7 @@ export function useProofGeneration({
   const [isLoading, setIsLoading] = useState<LoadingMode>(null);
   const [verificationStatus, setVerificationStatus] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
-  const [sdk, setSdk] = useState<ReturnType<typeof zkeSdk> | null>(null);
+  const [sdk, setSdk] = useState<ReturnType<typeof initZkEmailSdk> | null>(null);
 
   const address = useWalletAddress();
   const { execute: executeAsync } = useAsync();
@@ -34,12 +35,12 @@ export function useProofGeneration({
   // Initialize SDK only on client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setSdk(zkeSdk());
+      setSdk(initZkEmailSdk());
     }
   }, []);
 
   const externalInputs: ExternalInputInput[] = [
-    { name: "address", value: address || "", maxLength: 64 },
+    { name: "address", value: address || "" },
   ];
 
   const generateProof = async (mode: "client" | "server") => {

@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { SelfApp, SelfAppBuilder } from "@selfxyz/qrcode"
+import { SelfAppBuilder } from "@selfxyz/qrcode"
+import type { SelfApp } from "@selfxyz/qrcode"
 import { useAccount } from "wagmi"
 
 interface SelfDisclosures {
