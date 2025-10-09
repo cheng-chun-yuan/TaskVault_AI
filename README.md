@@ -12,7 +12,9 @@
 
 - **Decentralized Identity Registry**: Eliminates the need for public wallet addresses or centralized storage, enhancing user privacy.
 
-### 🤖 AI-Powered Validation (ELIZA OS)
+### 🤖 AI-Powered Validation
+
+- **Flexible Agent Framework**: Support for multiple agent frameworks and protocols. Projects can define custom agent properties or choose from pre-built agents to suit their validation needs.
 
 - **Tweet Content Analysis**: Utilizes NLP models to scan submissions for required hashtags and brand mentions.
 
@@ -26,7 +28,7 @@
 
 - **Prize Pool Creation**: Campaign creators lock funds into the Vault Contract, ensuring liquidity for rewards.
 
-- **Automated Evaluation**: ELIZA OS scores submissions based on predefined criteria, with results recorded immutably on-chain.
+- **Automated Evaluation**: AI agents score submissions based on predefined criteria, with results recorded immutably on-chain.
 
 - **Instant Distribution**: Smart contracts automatically transfer rewards to qualified participants without delays or intermediaries.
 
@@ -44,7 +46,7 @@
 
 2. **Participation**: Users submit social media content (e.g., tweets) via TaskVault’s dApp interface, verified through zkEmail.
 
-3. **Evaluation**: ELIZA OS evaluates submissions for compliance, originality, sentiment, and engagement potential. Scores are recorded immutably on-chain.
+3. **Evaluation**: AI agents evaluate submissions for compliance, originality, sentiment, and engagement potential. Scores are recorded immutably on-chain.
 
 4. **Reward Distribution**: Smart contracts automatically transfer rewards to eligible participants based on their scores.
 
@@ -58,11 +60,15 @@
 
 - **Self Protocol**: Deploys a decentralized identity registry on Ethereum (SubmissionRegistry) to store verification requirements. Each chain can have different verification configurations.
 
-### 🤖 AI Evaluation Layer (ELIZA OS)
+### 🤖 AI Evaluation Layer
 
-- **NLP Pipeline**: Built with the ElizaOS Framework, integrating with a Twitter scraper to monitor submissions and respond with instant rewards.
+- **Multi-Protocol Support**: Flexible architecture supporting various agent frameworks and protocols. Developers can integrate their preferred AI agents or customize pre-built solutions.
+
+- **Agent Configuration**: Projects can define custom agent properties including evaluation criteria, scoring weights, and validation rules to match their specific requirements.
 
 - **StyleHash Configuration**: Projects can set their stylehash on-chain to guide the AI agent's evaluation criteria, ensuring privacy and diverse judgment aspects.
+
+- **NLP Pipeline**: Integration capabilities with Twitter scrapers and social media monitoring tools to track submissions and trigger instant rewards.
 
 ### 🧱 Blockchain & Smart Contracts
 
@@ -96,7 +102,7 @@
 
 - **Identity Verification**: Combines zkEmail and Self Protocol for secure, privacy-preserving user authentication.
 
-- **AI Evaluation**: ELIZA OS employs NLP and machine learning to assess content quality and relevance.
+- **AI Evaluation**: Flexible agent framework supporting multiple protocols and customizable evaluation models to assess content quality and relevance.
 
 - **Blockchain Automation**: Smart contracts handle reward distribution, ensuring instant and transparent transactions.
 
@@ -105,8 +111,6 @@
 ---
 
 ## 📚 Resources
-
-- **ELIZA OS Whitepaper**: [arXiv: Eliza - A Web3 Friendly AI Agent Operating System](https://arxiv.org/html/2501.06781v1)
 
 - **ETHGlobal Submission**: [TaskVault AI Showcase](https://ethglobal.com/showcase/taskvault-ai-ypts7)
 
