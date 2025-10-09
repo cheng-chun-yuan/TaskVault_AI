@@ -1,6 +1,6 @@
-# 🧠 TaskVault AI
+# 🧠 HiveMind
 
-**TaskVault AI** is an innovative platform that bridges Web2 social engagement with Web3 automation. It offers privacy-preserving identity verification, AI-powered content evaluation, and blockchain-based reward distribution, ensuring effortless participation, instant rewards, and complete transparency.
+**HiveMind** is an innovative platform that bridges Web2 social engagement with Web3 automation. It offers privacy-preserving identity verification, AI-powered content evaluation, and blockchain-based reward distribution, ensuring effortless participation, instant rewards, and complete transparency.
 
 ---
 
@@ -44,7 +44,7 @@
 
 1. **Campaign Creation**: Brands define submission criteria (e.g., hashtags, mentions) and lock funds into a Vault Contract.
 
-2. **Participation**: Users submit social media content (e.g., tweets) via TaskVault’s dApp interface, verified through zkEmail.
+2. **Participation**: Users submit social media content (e.g., tweets) via HiveMind's dApp interface, verified through zkEmail.
 
 3. **Evaluation**: AI agents evaluate submissions for compliance, originality, sentiment, and engagement potential. Scores are recorded immutably on-chain.
 
@@ -73,7 +73,7 @@
 ### 🧱 Blockchain & Smart Contracts
 
 - **Core Contracts**:
-  - `TaskVaultCore`: `0x8441c3b1e6747605ab04e8a64f309bfba1fd37fe`
+  - `HiveMindCore`: `0x8441c3b1e6747605ab04e8a64f309bfba1fd37fe`
   - `SubmissionRegistry`: `0x0ff023acedbf133b998c70dd73d7b54db926cd44`
   - `PrizeVault`: `0xaf9048dca78acb1e4ea4a51af7b9e496a10c9e25`
   - `ERC20Mock`: `0xa5839608ff9511b66ab177530bd508727ca3455a`
@@ -98,7 +98,7 @@
 
 ## 🧪 How It's Made
 
-**TaskVault AI** integrates zero-knowledge proofs, AI/ML models, and blockchain automation into a cohesive stack:
+**HiveMind** integrates zero-knowledge proofs, AI/ML models, and blockchain automation into a cohesive stack:
 
 - **Identity Verification**: Combines zkEmail and Self Protocol for secure, privacy-preserving user authentication.
 
@@ -112,7 +112,7 @@
 
 ## 📚 Resources
 
-- **ETHGlobal Submission**: [TaskVault AI Showcase](https://ethglobal.com/showcase/taskvault-ai-ypts7)
+- **ETHGlobal Submission**: [HiveMind Showcase](https://ethglobal.com/showcase/taskvault-ai-ypts7)
 
 ---
 

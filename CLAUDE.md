@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Architecture
 
-**TaskVault AI** is a monorepo with three main applications:
+**HiveMind** is a monorepo with three main applications:
 
 - **apps/web**: Next.js 15 frontend with Prisma database integration
 - **apps/contract**: Hardhat smart contract development environment
@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Core System Components
 
 **Smart Contracts** (`apps/contract/contracts/`):
-- `taskVaultCore.sol`: Main contract managing task creation, style commits/reveals, and verification
+- `hiveMindCore.sol`: Main contract managing task creation, style commits/reveals, and verification
 - `prizeVault.sol`: Handles prize distribution and refunds
 - `submissionRegistry.sol`: Manages task submissions with verification configs
 
@@ -137,7 +137,7 @@ The project uses Self Protocol V2 for identity verification:
 ```typescript
 // Frontend
 const app = new SelfAppBuilder({
-  appName: "TaskVault AI",
+  appName: "HiveMind",
   scope: "trustjudge-ai",
   disclosures: {
     minimumAge: 18,

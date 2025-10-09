@@ -36,7 +36,7 @@ export default function AppHeader() {
         {/* Logo / Title */}
         <Link href="/" className="flex items-center space-x-2">
           <Logo width={120} height={120} className="h-8 w-auto" />
-          <span className="font-mono font-bold text-lg md:text-xl">TaskVault AI</span>
+          <span className="font-mono font-bold text-lg md:text-xl">HiveMind</span>
         </Link>
 
         {/* Desktop Navigation */}

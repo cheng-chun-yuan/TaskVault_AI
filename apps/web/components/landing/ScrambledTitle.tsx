@@ -88,7 +88,7 @@ const ScrambledTitle = () => {
 
   useEffect(() => {
     if (mounted && scramblerRef.current) {
-      const phrases = ["Create tasks.", "Let AI judge.", "Reward the best —", "transparently.", "Only on TaskVault AI."]
+      const phrases = ["Create tasks.", "Let AI judge.", "Reward the best —", "transparently.", "Only on HiveMind."]
       let counter = 0
       const next = () => {
         scramblerRef.current!.setText(phrases[counter] || "").then(() => {

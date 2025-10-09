@@ -9,7 +9,7 @@ const LandingSection = () => {
       <div className="container mx-auto max-w-5xl text-center space-y-8">
         <ScrambledTitle />
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          TaskVault AI is a decentralized platform for creating tasks, submitting solutions, and getting fair AI
+          HiveMind is a decentralized platform for creating tasks, submitting solutions, and getting fair AI
           judgments with transparent rewards.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">

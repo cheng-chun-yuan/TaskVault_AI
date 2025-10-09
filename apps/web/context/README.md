@@ -1,6 +1,6 @@
-# TaskVault AI Context System
+# HiveMind Context System
 
-This document explains how to use the expanded context system for global state management across the TaskVault AI application.
+This document explains how to use the expanded context system for global state management across the HiveMind application.
 
 ## Available Contexts
 

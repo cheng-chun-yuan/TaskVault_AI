@@ -10,7 +10,7 @@ export function Logo({ width = 200, height = 200, className }: LogoProps) {
   return (
     <Image
       src="/logo.png"
-      alt="TaskVault AI"
+      alt="HiveMind"
       width={width}
       height={height}
       className={className}

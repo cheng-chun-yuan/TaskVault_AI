@@ -21,8 +21,8 @@ interface SelfVerificationConfig {
 }
 
 export function useSelfVerification(
-  appName: string = "TaskVault AI",
-  scope: string = "trustjudge-ai",
+  appName: string = "HiveMind",
+  scope: string = "hivemind-ai",
   disclosures: SelfDisclosures = {},
   config: SelfVerificationConfig = {}
 ) {

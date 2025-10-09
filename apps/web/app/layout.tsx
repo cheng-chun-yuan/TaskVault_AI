@@ -21,7 +21,7 @@ const fontMono = FontMono({
 })
 
 export const metadata: Metadata = {
-  title: "TaskVault AI",
+  title: "HiveMind",
   description: "Create tasks. Let AI judge. Reward the best — transparently.",
 }
 

@@ -19,8 +19,8 @@ export default function VerificationStep() {
   const [showCountryModal, setShowCountryModal] = useState(false)
 
   const { selfApp, isReady } = useSelfVerification(
-    "TaskVault AI",
-    "taskvault-ai",
+    "HiveMind",
+    "hivemind-ai",
     {
       minimumAge: formData.minimumAge,
       excludedCountries: formData.excludedCountries,

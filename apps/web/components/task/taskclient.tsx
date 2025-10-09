@@ -69,8 +69,8 @@ export default function TaskPageClient({ taskId }: { taskId: string }) {
   // Use the modern hooks for registration status and self verification
   const { isRegistered } = useRegistrationStatus(taskId);
   const { selfApp } = useSelfVerification(
-    "TaskVault AI",
-    "trustjudge-ai",
+    "HiveMind",
+    "hivemind-ai",
     {
       minimumAge: 18,
       excludedCountries: [
