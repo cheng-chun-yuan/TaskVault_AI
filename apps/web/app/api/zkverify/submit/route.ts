@@ -31,15 +31,12 @@ export async function POST(request: Request) {
     }
     console.log('✅ ZKVERIFY_SEED_PHRASE found')
 
-    // Initialize zkVerify session with custom network configuration
+    // Initialize zkVerify session with Volta network
     console.log('Initializing zkVerify session...')
     const session = await zkVerifySession.start()
-      .Custom({
-        websocket: "wss://testnet-rpc.zkverify.io",
-        rpc: "https://testnet-rpc.zkverify.io"
-      }) // Custom network
-      .withAccount(seedPhrase); // Full session with a single active account
-    
+      .Volta()
+      .withAccount(seedPhrase)
+
     console.log('✅ zkVerify session initialized successfully')
 
     try {
@@ -47,9 +44,9 @@ export async function POST(request: Request) {
       console.log('Submitting proof for verification...')
       
       const { events } = await session.verify()
-        .groth16({ 
-          library: Library.snarkjs, 
-          curve: CurveType.bn128 
+        .groth16({
+          library: Library.snarkjs,
+          curve: CurveType.bn128
         })
         .execute({
           proofData: {

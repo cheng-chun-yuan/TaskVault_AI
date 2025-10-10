@@ -9,6 +9,18 @@ interface StatusDisplayProps {
 export function StatusDisplay({ isLoading, verificationStatus }: StatusDisplayProps) {
   if (!isLoading && !verificationStatus) return null;
 
+  // Extract block hash from verification status if present
+  const blockHashMatch = verificationStatus.match(/0x[a-fA-F0-9]{64}/);
+  const blockHash = blockHashMatch ? blockHashMatch[0] : null;
+  const explorerUrl = blockHash
+    ? `https://zkverify-testnet.subscan.io/block/${blockHash}`
+    : null;
+
+  // Create status message without block hash (we'll show it as a link)
+  const statusMessage = blockHash
+    ? verificationStatus.replace(blockHash, '').trim()
+    : verificationStatus;
+
   return (
     <>
       {/* Loading State */}
@@ -19,8 +31,8 @@ export function StatusDisplay({ isLoading, verificationStatus }: StatusDisplayPr
             <AlertCircle className="h-4 w-4 text-blue-600" />
           </div>
           <AlertDescription className="text-blue-800 font-medium">
-            {isLoading === "verifying" 
-              ? "Verifying proof on zkVerify network..." 
+            {isLoading === "verifying"
+              ? "Verifying proof on zkVerify network..."
               : "Generating zero-knowledge proof... This may take several minutes."
             }
           </AlertDescription>
@@ -30,27 +42,40 @@ export function StatusDisplay({ isLoading, verificationStatus }: StatusDisplayPr
       {/* Verification Status */}
       {verificationStatus && (
         <Alert className={`${
-          verificationStatus.includes("✅") 
-            ? "border-green-300 bg-green-50" 
-            : verificationStatus.includes("❌") 
-              ? "border-red-300 bg-red-50" 
+          verificationStatus.includes("✅")
+            ? "border-green-300 bg-green-50"
+            : verificationStatus.includes("❌")
+              ? "border-red-300 bg-red-50"
               : "border-blue-300 bg-blue-50"
         }`}>
           <CheckCircle className={`h-4 w-4 ${
-            verificationStatus.includes("✅") 
-              ? "text-green-600" 
-              : verificationStatus.includes("❌") 
-                ? "text-red-600" 
+            verificationStatus.includes("✅")
+              ? "text-green-600"
+              : verificationStatus.includes("❌")
+                ? "text-red-600"
                 : "text-blue-600"
           }`} />
           <AlertDescription className={`font-medium ${
-            verificationStatus.includes("✅") 
-              ? "text-green-800" 
-              : verificationStatus.includes("❌") 
-                ? "text-red-800" 
+            verificationStatus.includes("✅")
+              ? "text-green-800"
+              : verificationStatus.includes("❌")
+                ? "text-red-800"
                 : "text-blue-800"
           }`}>
-            <strong>zkVerify Status:</strong> {verificationStatus}
+            <strong>zkVerify Status:</strong> {statusMessage}
+            {explorerUrl && (
+              <>
+                {" "}
+                <a
+                  href={explorerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:no-underline"
+                >
+                  view on zkVerify explorer
+                </a>
+              </>
+            )}
           </AlertDescription>
         </Alert>
       )}

@@ -54,8 +54,17 @@ export async function POST(req: Request) {
 export async function GET(request: Request) {
   try {
     // Check if database is configured
-    if (!database.url || !prisma) {
+    if (!database.url) {
       // Return mock data for development when DB is not configured
+      return NextResponse.json({
+        tasks: [],
+        total: 0,
+        hasMore: false
+      })
+    }
+
+    if (!prisma) {
+      console.error('Prisma client not initialized')
       return NextResponse.json({
         tasks: [],
         total: 0,
@@ -202,8 +211,16 @@ export async function GET(request: Request) {
     return response
   } catch (error) {
     console.error('Error fetching tasks:', error)
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error('Error message:', error.message)
+      console.error('Error stack:', error.stack)
+    }
     return NextResponse.json(
-      { error: 'Failed to fetch tasks' },
+      {
+        error: 'Failed to fetch tasks',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     )
   }
