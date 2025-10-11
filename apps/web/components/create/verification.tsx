@@ -27,6 +27,10 @@ export default function VerificationStep() {
       ofac: formData.ofac,
       nationality: true,
       name: true,
+    },
+    {
+      endpoint: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://novel-rapidly-panda.ngrok-free.app'}/api/verify/${formData.taskId}`,
+      endpointType: "https",
     }
   )
 

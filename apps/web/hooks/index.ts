@@ -12,6 +12,7 @@ export { useProofGeneration } from './features/proof/useProofGeneration'
 export { useTasks } from './features/tasks/useTasks'
 export { useTokenApproval } from './features/tasks/useTokenApproval'
 export { useSelfVerification } from './features/verification/useSelfVerification'
+export { useReclaimVerification } from './features/reclaim/useReclaimVerification'
 
 // Legacy exports (to be removed after migration)
 export { useRegistrationStatus } from './useRegistrationStatus'

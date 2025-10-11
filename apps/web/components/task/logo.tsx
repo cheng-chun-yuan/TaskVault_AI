@@ -9,7 +9,7 @@ interface LogoProps {
 export function Logo({ width = 200, height = 200, className }: LogoProps) {
   return (
     <Image
-      src="/logo.png"
+      src="/hivemind-app-logo.png"
       alt="HiveMind"
       width={width}
       height={height}
