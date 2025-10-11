@@ -155,7 +155,7 @@ export const useUserStore = create<UserStore>()(
               localStorage.setItem(`profile_${userAddress}_time`, Date.now().toString())
             }
           } else {
-            throw new Error('Failed to load user profile')
+            console.error("Error loading user profile:", response.statusText)
           }
         } catch (error) {
           console.error("Error loading user profile:", error)

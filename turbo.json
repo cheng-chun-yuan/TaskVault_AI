@@ -6,7 +6,12 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
-      "env": ["ZKVERIFY_SEED_PHRASE"]
+      "env": [
+        "ZKVERIFY_SEED_PHRASE",
+        "RECLAIM_APPLICATION_ID",
+        "RECLAIM_APPLICATION_SECRET",
+        "RECLAIM_PROVIDER_ID"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -17,7 +22,12 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["ZKVERIFY_SEED_PHRASE"]
+      "env": [
+        "ZKVERIFY_SEED_PHRASE",
+        "RECLAIM_APPLICATION_ID",
+        "RECLAIM_APPLICATION_SECRET",
+        "RECLAIM_PROVIDER_ID"
+      ]
     }
   }
 }

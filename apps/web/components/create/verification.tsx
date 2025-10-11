@@ -29,7 +29,7 @@ export default function VerificationStep() {
       name: true,
     },
     {
-      endpoint: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://novel-rapidly-panda.ngrok-free.app'}/api/verify/${formData.taskId}`,
+      endpoint: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://novel-rapidly-panda.ngrok-free.app'}`,
       endpointType: "https",
     }
   )
