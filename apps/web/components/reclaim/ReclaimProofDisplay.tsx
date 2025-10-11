@@ -2,12 +2,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@work
 import { Badge } from "@workspace/ui/components/badge";
 import { CheckCircle2 } from "lucide-react";
 
+interface ExtractedParameters {
+  screen_name?: string;
+  followers_count?: string;
+  created_at?: string;
+  URL_PARAM_DOMAIN?: string;
+}
+
 interface Proof {
   identifier: string;
   claimData?: {
     provider?: string;
     parameters?: string;
     context?: string;
+    extractedParameters?: ExtractedParameters;
   };
   signatures?: unknown[];
 }
@@ -37,31 +45,70 @@ export function ReclaimProofDisplay({ proofs }: ReclaimProofDisplayProps) {
             </div>
 
             <div className="space-y-2 text-sm">
-              <div>
-                <span className="font-semibold text-muted-foreground">Identifier:</span>
-                <p className="font-mono text-xs break-all mt-1">{proof.identifier}</p>
-              </div>
-
               {proof.claimData && (
                 <div>
-                  <span className="font-semibold text-muted-foreground">Claim Data:</span>
-                  <div className="mt-1 space-y-1">
-                    <p className="text-xs"><span className="font-medium">Provider:</span> {proof.claimData.provider}</p>
-                    {proof.claimData.parameters && (
-                      <p className="text-xs"><span className="font-medium">Parameters:</span> {proof.claimData.parameters}</p>
+                  <span className="font-semibold text-muted-foreground">Verified Data:</span>
+                  <div className="mt-2 space-y-2">
+                    {proof.claimData.provider && (
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-xs text-muted-foreground min-w-[80px]">Provider:</span>
+                        <span className="text-xs break-all">{proof.claimData.provider}</span>
+                      </div>
                     )}
-                    {proof.claimData.context && (
-                      <p className="text-xs"><span className="font-medium">Context:</span> {proof.claimData.context}</p>
-                    )}
+
+                    {/* Extract context data if available */}
+                    {(() => {
+                      try {
+                        const context = proof.claimData.context ? JSON.parse(proof.claimData.context) : null;
+                        const extractedParams = context?.extractedParameters || {};
+                        const providerHash = context?.providerHash;
+
+                        return (
+                          <>
+                            {extractedParams.URL_PARAM_DOMAIN && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-medium text-xs text-muted-foreground min-w-[80px]">Domain:</span>
+                                <span className="text-xs">{extractedParams.URL_PARAM_DOMAIN}</span>
+                              </div>
+                            )}
+                            {extractedParams.screen_name && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-medium text-xs text-muted-foreground min-w-[80px]">Username:</span>
+                                <span className="text-xs font-mono">@{extractedParams.screen_name}</span>
+                              </div>
+                            )}
+                            {extractedParams.followers_count && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-medium text-xs text-muted-foreground min-w-[80px]">Followers:</span>
+                                <span className="text-xs">{extractedParams.followers_count}</span>
+                              </div>
+                            )}
+                            {extractedParams.created_at && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-medium text-xs text-muted-foreground min-w-[80px]">Created:</span>
+                                <span className="text-xs">{extractedParams.created_at}</span>
+                              </div>
+                            )}
+                            {providerHash && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-medium text-xs text-muted-foreground min-w-[80px]">Proof Hash:</span>
+                                <span className="text-xs font-mono break-all">{providerHash}</span>
+                              </div>
+                            )}
+                          </>
+                        );
+                      } catch {
+                        return null;
+                      }
+                    })()}
                   </div>
                 </div>
               )}
 
               {proof.signatures && proof.signatures.length > 0 && (
-                <div>
-                  <span className="font-semibold text-muted-foreground">Signatures:</span>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {proof.signatures.length} signature{proof.signatures.length > 1 ? 's' : ''} included
+                <div className="pt-2 border-t">
+                  <p className="text-xs text-muted-foreground">
+                    ✓ {proof.signatures.length} cryptographic signature{proof.signatures.length > 1 ? 's' : ''} verified
                   </p>
                 </div>
               )}
