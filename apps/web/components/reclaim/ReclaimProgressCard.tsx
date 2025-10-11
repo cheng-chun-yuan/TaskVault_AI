@@ -1,11 +1,21 @@
 import { Card, CardContent } from "@workspace/ui/components/card";
 import { Badge } from "@workspace/ui/components/badge";
-import { CheckCircle, Clock, ShieldCheck, AlertCircle } from "lucide-react";
+import { CheckCircle, Clock, AlertCircle } from "lucide-react";
 import type { VerificationStatus } from "@/hooks/features/reclaim/useReclaimVerification";
+
+interface Proof {
+  identifier: string;
+  claimData?: {
+    provider?: string;
+    parameters?: string;
+    context?: string;
+  };
+  signatures?: unknown[];
+}
 
 interface ReclaimProgressCardProps {
   isLoading: boolean;
-  proofs: any[] | null;
+  proofs: Proof[] | null;
   verificationStatus: VerificationStatus;
 }
 

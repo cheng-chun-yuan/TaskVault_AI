@@ -4,11 +4,21 @@ import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { ShieldCheck, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import type { VerificationStatus } from "@/hooks/features/reclaim/useReclaimVerification";
 
+interface Proof {
+  identifier: string;
+  claimData?: {
+    provider?: string;
+    parameters?: string;
+    context?: string;
+  };
+  signatures?: unknown[];
+}
+
 interface ReclaimVerificationCardProps {
   address: string | undefined;
   isLoading: boolean;
   verificationStatus: VerificationStatus;
-  proofs: any[] | null;
+  proofs: Proof[] | null;
   error: string | null;
   onStartVerification: () => void;
 }

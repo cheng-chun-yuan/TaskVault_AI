@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card";
 import { Badge } from "@workspace/ui/components/badge";
-import { ShieldCheck, Smartphone, QrCode, Chrome } from "lucide-react";
+import { ShieldCheck, Smartphone, Chrome } from "lucide-react";
 
 export function ReclaimInstructionsCard() {
   return (
@@ -35,7 +35,7 @@ export function ReclaimInstructionsCard() {
             <div className="space-y-1">
               <p className="font-medium text-sm">Start Verification</p>
               <p className="text-xs text-muted-foreground">
-                Click "Start Verification" to begin the Reclaim Protocol flow
+                Click &quot;Start Verification&quot; to begin the Reclaim Protocol flow
               </p>
             </div>
           </div>

@@ -2,8 +2,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@work
 import { Badge } from "@workspace/ui/components/badge";
 import { CheckCircle2 } from "lucide-react";
 
+interface Proof {
+  identifier: string;
+  claimData?: {
+    provider?: string;
+    parameters?: string;
+    context?: string;
+  };
+  signatures?: unknown[];
+}
+
 interface ReclaimProofDisplayProps {
-  proofs: any[];
+  proofs: Proof[];
 }
 
 export function ReclaimProofDisplay({ proofs }: ReclaimProofDisplayProps) {

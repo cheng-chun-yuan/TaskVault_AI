@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const applicationId = process.env.RECLAIM_APPLICATION_ID;
     const applicationSecret = process.env.RECLAIM_APPLICATION_SECRET;

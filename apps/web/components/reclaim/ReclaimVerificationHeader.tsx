@@ -12,7 +12,7 @@ export function ReclaimVerificationHeader() {
         </h1>
       </div>
       <p className="text-muted-foreground text-sm sm:text-base">
-        Verify your identity and data using Reclaim Protocol's privacy-preserving verification system.
+        Verify your identity and data using Reclaim Protocol&apos;s privacy-preserving verification system.
       </p>
     </div>
   );

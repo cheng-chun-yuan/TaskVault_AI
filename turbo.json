@@ -7,10 +7,12 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
+        "DATABASE_URL",
         "ZKVERIFY_SEED_PHRASE",
         "RECLAIM_APPLICATION_ID",
         "RECLAIM_APPLICATION_SECRET",
-        "RECLAIM_PROVIDER_ID"
+        "RECLAIM_PROVIDER_ID",
+        "PRIVATE_KEY"
       ]
     },
     "lint": {
@@ -23,10 +25,12 @@
       "cache": false,
       "persistent": true,
       "env": [
+        "DATABASE_URL",
         "ZKVERIFY_SEED_PHRASE",
         "RECLAIM_APPLICATION_ID",
         "RECLAIM_APPLICATION_SECRET",
-        "RECLAIM_PROVIDER_ID"
+        "RECLAIM_PROVIDER_ID",
+        "PRIVATE_KEY"
       ]
     }
   }
