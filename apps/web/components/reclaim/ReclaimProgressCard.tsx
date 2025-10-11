@@ -88,7 +88,7 @@ export function ReclaimProgressCard({
                       ? "destructive"
                       : "outline"
                   }
-                  className="text-[10px] sm:text-xs whitespace-nowrap px-1.5 sm:px-2"
+                  className="text-[10px] sm:text-xs px-1.5 sm:px-2 text-center leading-tight max-w-[60px] sm:max-w-none break-words hyphens-auto"
                 >
                   {step.label}
                 </Badge>
