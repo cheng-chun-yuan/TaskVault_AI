@@ -24,7 +24,6 @@ export const metadata: Metadata = {
   title: "HiveMind",
   description: "Create tasks. Let AI judge. Reward the best — transparently.",
   icons: {
-    icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
