@@ -6,16 +6,40 @@ import { VerificationMethodSelector } from "@/components/verify/VerificationMeth
 import { useFileUpload, useProofGeneration, useWalletAddress, useReclaimVerification } from "@/hooks";
 
 // Dynamically import Twitter components
-const TwitterProgressCard = dynamic(() => import("@/components/twitter/TwitterProgressCard").then(mod => ({ default: mod.TwitterProgressCard })), { ssr: false });
-const TwitterInstructionsCard = dynamic(() => import("@/components/twitter/TwitterInstructionsCard"), { ssr: false });
-const TwitterUploadCard = dynamic(() => import("@/components/twitter/TwitterUploadCard").then(mod => ({ default: mod.TwitterUploadCard })), { ssr: false });
-const TwitterProofDisplay = dynamic(() => import("@/components/twitter/TwitterProofDisplay").then(mod => ({ default: mod.TwitterProofDisplay })), { ssr: false });
+const TwitterProgressCard = dynamic(
+  () => import("@/components/twitter/TwitterProgressCard").then((mod) => mod.TwitterProgressCard),
+  { ssr: false }
+);
+const TwitterInstructionsCard = dynamic(
+  () => import("@/components/twitter/TwitterInstructionsCard").then((mod) => mod.TwitterInstructionsCard),
+  { ssr: false }
+);
+const TwitterUploadCard = dynamic(
+  () => import("@/components/twitter/TwitterUploadCard").then((mod) => mod.TwitterUploadCard),
+  { ssr: false }
+);
+const TwitterProofDisplay = dynamic(
+  () => import("@/components/twitter/TwitterProofDisplay").then((mod) => mod.TwitterProofDisplay),
+  { ssr: false }
+);
 
 // Dynamically import Reclaim components
-const ReclaimProgressCard = dynamic(() => import("@/components/reclaim/ReclaimProgressCard").then(mod => ({ default: mod.ReclaimProgressCard })), { ssr: false });
-const ReclaimInstructionsCard = dynamic(() => import("@/components/reclaim/ReclaimInstructionsCard"), { ssr: false });
-const ReclaimVerificationCard = dynamic(() => import("@/components/reclaim/ReclaimVerificationCard").then(mod => ({ default: mod.ReclaimVerificationCard })), { ssr: false });
-const ReclaimProofDisplay = dynamic(() => import("@/components/reclaim/ReclaimProofDisplay").then(mod => ({ default: mod.ReclaimProofDisplay })), { ssr: false });
+const ReclaimProgressCard = dynamic(
+  () => import("@/components/reclaim/ReclaimProgressCard").then((mod) => mod.ReclaimProgressCard),
+  { ssr: false }
+);
+const ReclaimInstructionsCard = dynamic(
+  () => import("@/components/reclaim/ReclaimInstructionsCard").then((mod) => mod.ReclaimInstructionsCard),
+  { ssr: false }
+);
+const ReclaimVerificationCard = dynamic(
+  () => import("@/components/reclaim/ReclaimVerificationCard").then((mod) => mod.ReclaimVerificationCard),
+  { ssr: false }
+);
+const ReclaimProofDisplay = dynamic(
+  () => import("@/components/reclaim/ReclaimProofDisplay").then((mod) => mod.ReclaimProofDisplay),
+  { ssr: false }
+);
 
 export default function VerifyPageContent() {
   const [selectedMethod, setSelectedMethod] = useState<"zkemail" | "reclaim">("reclaim");
