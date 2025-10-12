@@ -1,19 +1,19 @@
 "use client";
 
 import dynamicImport from "next/dynamic";
-import { TwitterVerificationHeader } from "@/components/twitter/TwitterVerificationHeader";
+import { VerificationHeader } from "@/components/verify/VerificationHeader";
 
-// Force dynamic rendering to prevent SSR issues with web3 hooks and zkEmail SDK
+// Force dynamic rendering to prevent SSR issues
 export const dynamic = 'force-dynamic'
 
 // Dynamically import the hook-using component
-const TwitterPageContent = dynamicImport(() => import("./TwitterPageContent"), { ssr: false });
+const VerifyPageContent = dynamicImport(() => import("./VerifyPageContent"), { ssr: false });
 
-export default function TwitterPage() {
+export default function VerifyPage() {
   return (
-    <div className="container mx-auto py-6 px-4 sm:py-8 sm:px-6 max-w-4xl">
-      <TwitterVerificationHeader />
-      <TwitterPageContent />
+    <div className="container mx-auto py-6 px-4 sm:py-8 sm:px-6 max-w-6xl">
+      <VerificationHeader />
+      <VerifyPageContent />
     </div>
   );
 }
