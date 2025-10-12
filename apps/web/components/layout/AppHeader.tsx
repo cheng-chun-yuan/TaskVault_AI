@@ -134,10 +134,9 @@ export default function AppHeader() {
                     <Link href="/verify" className="flex items-center">
                       <div className="flex items-center gap-2 flex-1">
                         <div className="flex items-center">
-                          <Twitter className="mr-2 h-4 w-4 text-blue-500" />
-                          <Shield className="h-3 w-3 text-green-500" />
+                          <Shield className="mr-2 h-4 w-4 text-green-500" />
                         </div>
-                        <span>Verify Social Identity</span>
+                        <span>Verify Identity</span>
                       </div>
                       <Badge variant="secondary" className="ml-2 text-xs">
                         ZK & Reclaim
@@ -226,8 +225,8 @@ export default function AppHeader() {
                   className="text-sm font-medium hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-accent flex items-center gap-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Twitter className="h-4 w-4 text-blue-500" />
-                  <span>Verify Social</span>
+                  <Shield className="h-4 w-4 text-green-500" />
+                  <span>Verify Identity</span>
                   <Badge variant="secondary" className="ml-auto text-xs">
                     ZK & Reclaim
                   </Badge>
