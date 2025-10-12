@@ -129,18 +129,18 @@ export default function AppHeader() {
                     </>
                   )}
                   
-                  {/* Twitter Verification */}
+                  {/* Social Verification */}
                   <DropdownMenuItem asChild>
-                    <Link href="/twitter" className="flex items-center">
+                    <Link href="/verify" className="flex items-center">
                       <div className="flex items-center gap-2 flex-1">
                         <div className="flex items-center">
                           <Twitter className="mr-2 h-4 w-4 text-blue-500" />
                           <Shield className="h-3 w-3 text-green-500" />
                         </div>
-                        <span>Verify Twitter Ownership</span>
+                        <span>Verify Social Identity</span>
                       </div>
                       <Badge variant="secondary" className="ml-2 text-xs">
-                        ZK Proof
+                        ZK & Reclaim
                       </Badge>
                     </Link>
                   </DropdownMenuItem>
@@ -219,17 +219,17 @@ export default function AppHeader() {
                 Browse Tasks
               </Link>
               
-              {/* Twitter Verification Link */}
+              {/* Social Verification Link */}
               {ready && authenticated && (
                 <Link
-                  href="/twitter"
+                  href="/verify"
                   className="text-sm font-medium hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-accent flex items-center gap-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Twitter className="h-4 w-4 text-blue-500" />
-                  <span>Verify Twitter</span>
+                  <span>Verify Social</span>
                   <Badge variant="secondary" className="ml-auto text-xs">
-                    ZK Proof
+                    ZK & Reclaim
                   </Badge>
                 </Link>
               )}
